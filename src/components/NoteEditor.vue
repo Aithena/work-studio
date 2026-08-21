@@ -153,9 +153,72 @@ const previewMenuItem: BubbleMenuItem = {
   onClick: (instance) => previewFromEditor(instance),
 }
 
-onMounted(() => {
-  if (!elRef.value) return
-  window.addEventListener('keydown', onKeydown)
+const SCROLL_KEY = 'workbench:note-scroll'
+let scrollSaveTimer: ReturnType<typeof setTimeout> | null = null
+let created = false
+
+function getScrollEl(): HTMLElement | null {
+  return elRef.value?.querySelector('.aie-content') as HTMLElement | null
+}
+
+function saveScrollPosition() {
+  const el = getScrollEl()
+  if (!el) return
+  try {
+    localStorage.setItem(SCROLL_KEY, String(Math.round(el.scrollTop)))
+  } catch {
+    // ignore
+  }
+}
+
+function readSavedScroll(): number | null {
+  try {
+    const raw = localStorage.getItem(SCROLL_KEY)
+    if (raw == null) return null
+    const top = Number(raw)
+    return Number.isFinite(top) ? Math.max(0, top) : null
+  } catch {
+    return null
+  }
+}
+
+function restoreScrollPosition() {
+  const el = getScrollEl()
+  if (!el) return
+  el.scrollTop = readSavedScroll() ?? 0
+}
+
+function onEditorScroll() {
+  if (scrollSaveTimer) clearTimeout(scrollSaveTimer)
+  scrollSaveTimer = setTimeout(() => {
+    scrollSaveTimer = null
+    saveScrollPosition()
+  }, 120)
+}
+
+function bindScroll() {
+  const el = getScrollEl()
+  if (!el) return
+  el.removeEventListener('scroll', onEditorScroll)
+  el.addEventListener('scroll', onEditorScroll, { passive: true })
+}
+
+function applyRestoredScroll() {
+  restoreScrollPosition()
+  requestAnimationFrame(() => restoreScrollPosition())
+  window.setTimeout(() => restoreScrollPosition(), 80)
+  window.setTimeout(() => restoreScrollPosition(), 320)
+  getScrollEl()
+    ?.querySelectorAll('img')
+    .forEach((img) => {
+      if (img.complete) return
+      img.addEventListener('load', () => restoreScrollPosition(), { once: true })
+    })
+}
+
+function createEditor() {
+  if (!elRef.value || created || !props.loaded) return
+  created = true
 
   editor = new AiEditor({
     element: elRef.value,
@@ -228,7 +291,29 @@ onMounted(() => {
       emit('change', next)
     },
   })
+
+  try {
+    editor.innerEditor?.commands.blur()
+  } catch {
+    // ignore
+  }
+
+  bindScroll()
+  applyRestoredScroll()
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', onKeydown)
+  window.addEventListener('pagehide', saveScrollPosition)
+  createEditor()
 })
+
+watch(
+  () => props.loaded,
+  (ready) => {
+    if (ready) createEditor()
+  },
+)
 
 watch(
   () => props.modelValue,
@@ -236,14 +321,21 @@ watch(
     if (!editor) return
     const next = value || ''
     if (next === editor.getHtml()) return
+    const el = getScrollEl()
+    const prevTop = el?.scrollTop ?? readSavedScroll() ?? 0
     syncing = true
-    editor.setContent(next)
+    editor.setContent(next, false)
     syncing = false
+    if (el) el.scrollTop = prevTop
   },
 )
 
 onUnmounted(() => {
   window.removeEventListener('keydown', onKeydown)
+  window.removeEventListener('pagehide', saveScrollPosition)
+  getScrollEl()?.removeEventListener('scroll', onEditorScroll)
+  if (scrollSaveTimer) clearTimeout(scrollSaveTimer)
+  saveScrollPosition()
   editor?.destroy()
   editor = null
 })
