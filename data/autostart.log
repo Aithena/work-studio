@@ -1,1 +1,9 @@
 ﻿[2026-08-21 21:39:36] starting work-studio at http://127.0.0.1:18811 (OpenBrowser=False)
+[2026-08-21 22:20:42] starting work-studio at http://127.0.0.1:18811 (OpenBrowser=True)
+[2026-08-21 22:20:45] server pid=20876
+[2026-08-21 22:22:26] server not ready in time; check http://127.0.0.1:18811 later
+[2026-08-21 22:22:26] opening browser
+[2026-08-21 22:23:09] starting work-studio at http://127.0.0.1:18811 (OpenBrowser=True)
+[2026-08-21 22:23:13] server pid=43788 via D:\Apps\work-studio\node_modules\.bin\tsx.cmd
+[2026-08-21 22:23:20] ready at http://127.0.0.1:18811
+[2026-08-21 22:23:20] opening browser

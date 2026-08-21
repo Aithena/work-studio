@@ -27,7 +27,7 @@ function Install-Autostart {
 
   Write-Host "Autostart installed:"
   Write-Host "  $ShortcutPath"
-  Write-Host "On next login it will start at http://127.0.0.1:18811 (no browser)"
+  Write-Host "On next login it will start at http://127.0.0.1:18899 (no browser)"
   Write-Host "Manual start with browser: pnpm autostart:run"
 }
 

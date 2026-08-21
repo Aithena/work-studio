@@ -31,7 +31,7 @@ export default defineConfig({
     },
   },
   server: {
-    port: 18818,
+    port: 18899,
     strictPort: true,
     proxy: {
       '/api': {
@@ -41,7 +41,7 @@ export default defineConfig({
     },
   },
   preview: {
-    port: 18818,
+    port: 18899,
     strictPort: true,
   },
 })
