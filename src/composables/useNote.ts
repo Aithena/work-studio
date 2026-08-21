@@ -85,5 +85,6 @@ export function useNote() {
     queueSave,
     load,
     flush,
+    saveNow,
   }
 }

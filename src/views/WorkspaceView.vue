@@ -9,6 +9,7 @@
         <template #right>
           <div class="right-pane">
             <NoteEditor
+              ref="editorRef"
               class="editor"
               :model-value="content"
               :loaded="loaded"
@@ -22,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { ElNotification } from 'element-plus'
 import AppHeader from '../components/AppHeader.vue'
 import NoteEditor from '../components/NoteEditor.vue'
@@ -30,7 +31,9 @@ import SplitPane from '../components/SplitPane.vue'
 import TodoPanel from '../components/TodoPanel.vue'
 import { useNote } from '../composables/useNote'
 
-const { content, saveState, lastSavedAt, loaded, queueSave, load } = useNote()
+const { content, saveState, lastSavedAt, loaded, queueSave, load, saveNow } = useNote()
+const editorRef = ref<{ getHtml: () => string } | null>(null)
+let savingManual = false
 
 function onNoteChange(value: string) {
   queueSave(value)
@@ -39,7 +42,43 @@ function onNoteChange(value: string) {
   }, 700)
 }
 
+async function handleManualSave() {
+  if (!loaded.value || savingManual) return
+  savingManual = true
+  try {
+    const html = editorRef.value?.getHtml() ?? content.value
+    content.value = html
+    const ok = await saveNow(html)
+    if (ok) {
+      ElNotification({
+        title: '笔记已保存',
+        message: '手动保存成功',
+        type: 'success',
+        duration: 2200,
+      })
+      window.dispatchEvent(new Event('workbench:activity'))
+    } else {
+      ElNotification({
+        title: '保存失败',
+        message: '请稍后重试，编辑内容仍保留在本地',
+        type: 'error',
+        duration: 3200,
+      })
+    }
+  } finally {
+    savingManual = false
+  }
+}
+
+function onKeydown(event: KeyboardEvent) {
+  const key = event.key.toLowerCase()
+  if (!(event.ctrlKey || event.metaKey) || key !== 's') return
+  event.preventDefault()
+  void handleManualSave()
+}
+
 onMounted(async () => {
+  window.addEventListener('keydown', onKeydown)
   try {
     await load()
   } catch (error) {
@@ -48,6 +87,10 @@ onMounted(async () => {
       message: error instanceof Error ? error.message : '请确认本地服务已启动',
     })
   }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', onKeydown)
 })
 </script>
 
