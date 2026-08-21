@@ -65,6 +65,8 @@ const ACTION_LABELS: Record<string, string> = {
   'todo.uncomplete': '恢复未完成',
   'todo.delete': '删除',
   'todo.restore': '恢复',
+  'todo.purge': '清除',
+  'todo.priority': '优先级',
   'note.save': '保存',
   'ai.chat': 'AI 对话',
 }

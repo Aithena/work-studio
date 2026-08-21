@@ -31,6 +31,8 @@ export type OperationAction =
   | 'todo.uncomplete'
   | 'todo.delete'
   | 'todo.restore'
+  | 'todo.purge'
+  | 'todo.priority'
   | 'note.save'
   | 'ai.chat'
 

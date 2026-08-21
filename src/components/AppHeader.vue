@@ -12,7 +12,13 @@
       >
         <el-icon :size="16"><Notebook /></el-icon>
       </button>
-      <button class="icon-btn" type="button" title="搜索即将推出" aria-label="搜索">
+      <button
+        class="icon-btn"
+        type="button"
+        title="搜索任务 (Ctrl+K)"
+        aria-label="搜索"
+        @click="openSearch"
+      >
         <el-icon :size="16"><Search /></el-icon>
       </button>
       <AccentPicker />
@@ -23,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { Notebook, Search } from '@element-plus/icons-vue'
 import { ElIcon } from 'element-plus'
 import AccentPicker from './AccentPicker.vue'
@@ -38,6 +44,20 @@ defineProps<{
 }>()
 
 const logOpen = ref(false)
+
+function openSearch() {
+  window.dispatchEvent(new Event('workbench:search'))
+}
+
+function onKeydown(event: KeyboardEvent) {
+  const key = event.key.toLowerCase()
+  if (!(event.ctrlKey || event.metaKey) || key !== 'k') return
+  event.preventDefault()
+  openSearch()
+}
+
+onMounted(() => window.addEventListener('keydown', onKeydown))
+onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 </script>
 
 <style scoped lang="less">

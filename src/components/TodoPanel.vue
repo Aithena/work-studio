@@ -11,6 +11,27 @@
       </div>
     </div>
 
+    <div v-if="searchOpen" class="search-bar">
+      <el-icon class="search-icon" :size="14"><Search /></el-icon>
+      <input
+        ref="searchInputRef"
+        :value="searchQuery"
+        type="search"
+        placeholder="搜索任务…"
+        @input="onSearchInput"
+        @keydown.esc.prevent="onSearchEsc"
+      />
+      <button
+        v-if="searchQuery"
+        class="clear-btn"
+        type="button"
+        aria-label="清空"
+        @click="clearSearchInput"
+      >
+        清空
+      </button>
+    </div>
+
     <div class="body">
       <div v-if="adding" class="composer">
         <span class="check-placeholder" />
@@ -27,7 +48,13 @@
       <div v-if="isEmpty && !adding" class="empty">
         <span class="empty-circle" />
         <p>{{ emptyText }}</p>
-        <button v-if="filter !== 'deleted'" type="button" @click="startAdd">＋ 添加第一件事</button>
+        <button
+          v-if="filter !== 'deleted' && !searchQuery.trim()"
+          type="button"
+          @click="startAdd"
+        >
+          ＋ 添加第一件事
+        </button>
       </div>
 
       <template v-else>
@@ -110,7 +137,9 @@
       @edit="onMenuEdit"
       @top="onMenuTop"
       @remove="onMenuRemove"
+      @purge="onMenuPurge"
       @restore="onMenuRestore"
+      @priority="onMenuPriority"
     />
   </section>
 </template>
@@ -118,27 +147,33 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, reactive, ref } from 'vue'
 import draggable from 'vuedraggable'
-import { ElMessage } from 'element-plus'
+import { Search } from '@element-plus/icons-vue'
+import { ElIcon, ElMessage } from 'element-plus'
 import TodoContextMenu from './TodoContextMenu.vue'
 import TodoFilterBar from './TodoFilterBar.vue'
 import TodoImportDialog from './TodoImportDialog.vue'
 import TodoItem from './TodoItem.vue'
 import { useTodos } from '../composables/useTodos'
-import type { Todo } from '../types'
+import type { Todo, TodoPriority } from '../types'
 
 const {
   counts,
   filter,
+  searchQuery,
   activeTodos,
   completedTodos,
   deletedTodos,
   load,
   setFilter,
+  setSearchQuery,
+  clearSearch,
   addTodo,
   importText,
   toggleTodo,
   editTodo,
+  setPriority,
   confirmDelete,
+  confirmPurge,
   restoreTodo,
   moveToTop,
   persistGroupOrder,
@@ -147,6 +182,8 @@ const {
 const adding = ref(false)
 const draft = ref('')
 const addInputRef = ref<HTMLInputElement | null>(null)
+const searchOpen = ref(false)
+const searchInputRef = ref<HTMLInputElement | null>(null)
 const importOpen = ref(false)
 const editingId = ref<number | null>(null)
 const menu = reactive({
@@ -171,10 +208,45 @@ const showCompletedHeader = computed(
 )
 
 const emptyText = computed(() => {
+  if (searchQuery.value.trim()) return '没有匹配的任务'
   if (filter.value === 'deleted') return '回收站是空的'
   if (filter.value === 'completed') return '还没有已完成的事情'
   return '还没有需要做的事情'
 })
+
+async function openSearch() {
+  searchOpen.value = true
+  if (filter.value === 'deleted') {
+    // keep recycle bin searchable as-is
+  } else if (filter.value !== 'all') {
+    await setFilter('all')
+  }
+  await nextTick()
+  searchInputRef.value?.focus()
+  searchInputRef.value?.select()
+}
+
+function closeSearch() {
+  searchOpen.value = false
+  clearSearch()
+}
+
+function onSearchInput(event: Event) {
+  setSearchQuery((event.target as HTMLInputElement).value)
+}
+
+function clearSearchInput() {
+  clearSearch()
+  searchInputRef.value?.focus()
+}
+
+function onSearchEsc() {
+  if (searchQuery.value) {
+    clearSearch()
+    return
+  }
+  closeSearch()
+}
 
 async function startAdd() {
   if (filter.value === 'deleted' || filter.value === 'completed') {
@@ -202,8 +274,8 @@ function openMenu(event: MouseEvent, todo: Todo) {
   event.stopPropagation()
   menu.visible = true
   menu.todo = todo
-  menu.x = Math.min(event.clientX, window.innerWidth - 190)
-  menu.y = Math.min(event.clientY, window.innerHeight - 180)
+  menu.x = Math.min(event.clientX, window.innerWidth - 220)
+  menu.y = Math.min(event.clientY, window.innerHeight - 260)
 }
 
 function closeMenu() {
@@ -231,8 +303,18 @@ function onMenuRemove() {
   closeMenu()
 }
 
+function onMenuPurge() {
+  if (menu.todo) void confirmPurge(menu.todo)
+  closeMenu()
+}
+
 function onMenuRestore() {
   if (menu.todo) void restoreTodo(menu.todo)
+  closeMenu()
+}
+
+function onMenuPriority(priority: TodoPriority | null) {
+  if (menu.todo) void setPriority(menu.todo, priority)
   closeMenu()
 }
 
@@ -266,10 +348,12 @@ function onDocClick() {
 onMounted(() => {
   void load()
   document.addEventListener('click', onDocClick)
+  window.addEventListener('workbench:search', openSearch as EventListener)
 })
 
 onUnmounted(() => {
   document.removeEventListener('click', onDocClick)
+  window.removeEventListener('workbench:search', openSearch as EventListener)
 })
 </script>
 
@@ -347,6 +431,60 @@ onUnmounted(() => {
 
   &:hover {
     background: var(--accent-hover);
+  }
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 15px 10px;
+  padding: 0 10px;
+  height: 34px;
+  border-radius: 10px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  flex-shrink: 0;
+
+  &:focus-within {
+    border-color: var(--accent);
+  }
+}
+
+.search-icon {
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+}
+
+.search-bar input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  font-size: 12px;
+  color: var(--color-text);
+
+  &::placeholder {
+    color: var(--color-text-tertiary);
+  }
+
+  &::-webkit-search-cancel-button {
+    display: none;
+  }
+}
+
+.clear-btn {
+  flex-shrink: 0;
+  height: 22px;
+  padding: 0 6px;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  border-radius: 6px;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: var(--color-text);
   }
 }
 

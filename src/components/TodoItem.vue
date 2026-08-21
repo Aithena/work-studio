@@ -14,7 +14,17 @@
       @keydown.esc.prevent="$emit('cancel-edit')"
       @blur="commit"
     />
-    <span v-else class="text" @dblclick="$emit('edit')">{{ todo.content }}</span>
+    <div v-else class="main">
+      <span class="text" @dblclick="$emit('edit')">{{ todo.content }}</span>
+      <span
+        v-if="todo.priority && !todo.completed"
+        class="priority"
+        :data-p="todo.priority"
+        :title="`优先级 ${todo.priority}`"
+      >
+        {{ todo.priority }}
+      </span>
+    </div>
     <span class="drag-handle" title="拖拽排序">
       <i /><i /><i /><i /><i /><i />
     </span>
@@ -120,12 +130,54 @@ function commit() {
   }
 }
 
-.text {
+.main {
   flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.text {
   min-width: 0;
   font-size: 12px;
   line-height: 1.5;
   color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.priority {
+  flex-shrink: 0;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+
+  &[data-p='P0'] {
+    color: #c62828;
+    background: rgba(198, 40, 40, 0.1);
+  }
+
+  &[data-p='P1'] {
+    color: #f57c00;
+    background: rgba(245, 124, 0, 0.12);
+  }
+
+  &[data-p='P2'] {
+    color: #1565c0;
+    background: rgba(21, 101, 192, 0.1);
+  }
+
+  &[data-p='P3'] {
+    color: #6b6b66;
+    background: rgba(0, 0, 0, 0.05);
+  }
 }
 
 .more {

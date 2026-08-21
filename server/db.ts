@@ -5,15 +5,21 @@ import Database from 'better-sqlite3'
 const DATA_DIR = path.join(process.cwd(), 'data')
 const DB_PATH = path.join(DATA_DIR, 'note.db')
 
+export type TodoPriority = 'P0' | 'P1' | 'P2' | 'P3'
+
 export type TodoRow = {
   id: number
   content: string
   completed: number
   deleted: number
+  hidden: number
+  priority: TodoPriority | null
   sort_order: number
   created_at: string
   updated_at: string
   completed_at: string | null
+  deleted_at: string | null
+  hidden_at: string | null
 }
 
 export type NoteRow = {
@@ -44,10 +50,14 @@ export function getDb(): Database.Database {
       content TEXT NOT NULL,
       completed INTEGER NOT NULL DEFAULT 0,
       deleted INTEGER NOT NULL DEFAULT 0,
+      hidden INTEGER NOT NULL DEFAULT 0,
+      priority TEXT,
       sort_order INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL,
-      completed_at TEXT
+      completed_at TEXT,
+      deleted_at TEXT,
+      hidden_at TEXT
     );
 
     CREATE TABLE IF NOT EXISTS notes (
@@ -83,6 +93,20 @@ export function getDb(): Database.Database {
   }
   if (cols.length > 0 && !cols.some((col) => col.name === 'chars')) {
     db.exec(`ALTER TABLE operation_logs ADD COLUMN chars INTEGER NOT NULL DEFAULT 0`)
+  }
+
+  const todoCols = db.prepare(`PRAGMA table_info(todos)`).all() as { name: string }[]
+  if (todoCols.length > 0 && !todoCols.some((col) => col.name === 'priority')) {
+    db.exec(`ALTER TABLE todos ADD COLUMN priority TEXT`)
+  }
+  if (todoCols.length > 0 && !todoCols.some((col) => col.name === 'hidden')) {
+    db.exec(`ALTER TABLE todos ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0`)
+  }
+  if (todoCols.length > 0 && !todoCols.some((col) => col.name === 'deleted_at')) {
+    db.exec(`ALTER TABLE todos ADD COLUMN deleted_at TEXT`)
+  }
+  if (todoCols.length > 0 && !todoCols.some((col) => col.name === 'hidden_at')) {
+    db.exec(`ALTER TABLE todos ADD COLUMN hidden_at TEXT`)
   }
 
   const note = db.prepare('SELECT id FROM notes WHERE id = 1').get()

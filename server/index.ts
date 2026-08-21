@@ -13,6 +13,7 @@ import {
   createTodos,
   getTodo,
   listTodos,
+  purgeTodo,
   reorderTodos,
   softDeleteTodo,
   updateTodo,
@@ -36,12 +37,15 @@ function mapTodo(row: TodoRow) {
     content: row.content,
     completed: row.completed === 1,
     deleted: row.deleted === 1,
+    priority: row.priority ?? null,
     sortOrder: row.sort_order,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     completedAt: row.completed_at,
   }
 }
+
+const PRIORITIES = new Set(['P0', 'P1', 'P2', 'P3'])
 
 function parseId(raw: string): number | null {
   const id = Number(raw)
@@ -122,16 +126,21 @@ app.put('/api/todos/:id', async (c) => {
   if (!id) return c.json(fail('无效的 Todo ID'), 400)
 
   const existing = getTodo(id)
-  if (!existing) return c.json(fail('Todo 不存在'), 404)
+  if (!existing || existing.hidden === 1) return c.json(fail('Todo 不存在'), 404)
 
-  let body: { content?: unknown; completed?: unknown; deleted?: unknown }
+  let body: { content?: unknown; completed?: unknown; deleted?: unknown; priority?: unknown }
   try {
     body = await c.req.json()
   } catch {
     return c.json(fail('请求体不是合法 JSON'), 400)
   }
 
-  const patch: { content?: string; completed?: boolean; deleted?: boolean } = {}
+  const patch: {
+    content?: string
+    completed?: boolean
+    deleted?: boolean
+    priority?: 'P0' | 'P1' | 'P2' | 'P3' | null
+  } = {}
   if (body.content != null) {
     if (typeof body.content !== 'string' || !body.content.trim()) {
       return c.json(fail('内容不能为空'), 400)
@@ -146,6 +155,15 @@ app.put('/api/todos/:id', async (c) => {
     if (typeof body.deleted !== 'boolean') return c.json(fail('deleted 必须是布尔值'), 400)
     patch.deleted = body.deleted
   }
+  if (body.priority !== undefined) {
+    if (body.priority === null) {
+      patch.priority = null
+    } else if (typeof body.priority === 'string' && PRIORITIES.has(body.priority)) {
+      patch.priority = body.priority as 'P0' | 'P1' | 'P2' | 'P3'
+    } else {
+      return c.json(fail('priority 必须是 P0/P1/P2/P3 或 null'), 400)
+    }
+  }
 
   const row = updateTodo(id, patch)
   return c.json(ok(mapTodo(row!)))
@@ -156,9 +174,22 @@ app.delete('/api/todos/:id', (c) => {
   if (!id) return c.json(fail('无效的 Todo ID'), 400)
 
   const existing = getTodo(id)
-  if (!existing) return c.json(fail('Todo 不存在'), 404)
+  if (!existing || existing.hidden === 1) return c.json(fail('Todo 不存在'), 404)
+  if (existing.deleted === 1) return c.json(fail('任务已在回收站，请使用清除'), 400)
 
   const row = softDeleteTodo(id)
+  return c.json(ok(mapTodo(row!)))
+})
+
+app.post('/api/todos/:id/purge', (c) => {
+  const id = parseId(c.req.param('id'))
+  if (!id) return c.json(fail('无效的 Todo ID'), 400)
+
+  const existing = getTodo(id)
+  if (!existing || existing.hidden === 1) return c.json(fail('Todo 不存在'), 404)
+  if (existing.deleted !== 1) return c.json(fail('仅回收站任务可清除'), 400)
+
+  const row = purgeTodo(id)
   return c.json(ok(mapTodo(row!)))
 })
 
