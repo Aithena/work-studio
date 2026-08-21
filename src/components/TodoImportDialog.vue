@@ -1,10 +1,10 @@
 <template>
   <el-dialog
     :model-value="modelValue"
-    class="wb-dialog"
-    width="480px"
+    class="wb-dialog import-dialog"
+    width="800px"
     align-center
-    :show-close="false"
+    :show-close="true"
     @close="close"
   >
     <template #header>
@@ -69,7 +69,7 @@ function submit() {
 
 <style scoped lang="less">
 .dialog-head {
-  text-align: center;
+  text-align: left;
 }
 
 .title {

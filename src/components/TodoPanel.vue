@@ -278,14 +278,14 @@ onUnmounted(() => {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: #f8f8f8;
+  background: #fafafa;
 }
 
 .head {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  padding: 28px 28px 12px;
+  padding: 15px 15px 12px;
   flex-shrink: 0;
 }
 
@@ -323,7 +323,7 @@ onUnmounted(() => {
 }
 
 .import-btn {
-  height: 32px;
+  height: 22px;
   padding: 0 10px;
   color: var(--color-text-secondary);
   font-size: 13px;
@@ -337,11 +337,11 @@ onUnmounted(() => {
 
 .add-btn {
   width: 32px;
-  height: 32px;
+  height: 22px;
   border-radius: var(--radius-md);
   background: var(--accent-soft);
   color: var(--accent);
-  font-size: 20px;
+  font-size: 16px;
   line-height: 1;
   transition: background 160ms ease;
 
@@ -354,7 +354,7 @@ onUnmounted(() => {
   flex: 1;
   min-height: 0;
   overflow: auto;
-  padding: 8px 18px 24px;
+  padding: 0px 10px 24px;
 }
 
 .section-label {

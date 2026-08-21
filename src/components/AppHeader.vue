@@ -16,9 +16,7 @@
         <el-icon :size="16"><Search /></el-icon>
       </button>
       <AccentPicker />
-      <button class="icon-btn" type="button" title="更多即将推出" aria-label="更多">
-        <el-icon :size="16"><More /></el-icon>
-      </button>
+      <QuickLinksMenu />
     </div>
     <ActivityLogDialog v-model="logOpen" />
   </header>
@@ -26,10 +24,11 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { More, Notebook, Search } from '@element-plus/icons-vue'
+import { Notebook, Search } from '@element-plus/icons-vue'
 import { ElIcon } from 'element-plus'
 import AccentPicker from './AccentPicker.vue'
 import ActivityLogDialog from './ActivityLogDialog.vue'
+import QuickLinksMenu from './QuickLinksMenu.vue'
 import SaveStatus from './SaveStatus.vue'
 import type { SaveState } from '../types'
 
