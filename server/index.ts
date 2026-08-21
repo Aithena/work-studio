@@ -8,7 +8,7 @@ import { getDb, type TodoRow } from './db'
 import { proxyChatCompletions } from './ai'
 import { listActivity, getMonthOverview, listOperationLogs } from './activity'
 import { getNote, saveNote } from './notes'
-import { ensureDailyBackup, buildExportPayload, importBackupPayload } from './backup'
+import { ensureDailyBackup, buildExportZip, importBackupZip } from './backup'
 import {
   contentTypeFor,
   resolveUploadPath,
@@ -252,23 +252,32 @@ app.get('/api/activity/logs', (c) => {
   return c.json(ok({ items: listOperationLogs(limit) }))
 })
 
-app.get('/api/backup/export', (c) => {
-  const payload = buildExportPayload()
-  const day = payload.exportedAt.slice(0, 10)
-  const filename = `workbench-backup-${day}.json`
-  return c.json(ok({ filename, payload }))
+app.get('/api/backup/export', async (c) => {
+  try {
+    const { filename, buffer } = await buildExportZip()
+    return new Response(buffer, {
+      headers: {
+        'Content-Type': 'application/zip',
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Content-Length': String(buffer.length),
+      },
+    })
+  } catch (error) {
+    return c.json(fail(error instanceof Error ? error.message : '导出失败'), 500)
+  }
 })
 
 app.post('/api/backup/import', async (c) => {
-  let body: unknown
   try {
-    body = await c.req.json()
-  } catch {
-    return c.json(fail('请求体不是合法 JSON'), 400)
-  }
+    const body = await c.req.parseBody()
+    const file = body.file
+    if (!(file instanceof File)) return c.json(fail('请上传 zip 备份文件'), 400)
 
-  try {
-    const result = importBackupPayload(body)
+    const name = file.name.toLowerCase()
+    if (!name.endsWith('.zip')) return c.json(fail('仅支持 .zip 备份文件'), 400)
+
+    const buffer = Buffer.from(await file.arrayBuffer())
+    const result = await importBackupZip(buffer)
     return c.json(ok(result))
   } catch (error) {
     return c.json(fail(error instanceof Error ? error.message : '导入失败'), 400)

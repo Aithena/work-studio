@@ -1,19 +1,15 @@
 import fs from 'node:fs'
 import path from 'node:path'
+import JSZip from 'jszip'
 import { BACKUP_DIR, DB_PATH, getDb, nowIso, type TodoPriority, type TodoRow } from './db'
 import { getNote, saveNote } from './notes'
-import { UPLOAD_DIR, contentTypeFor, ensureUploadDir, resolveUploadPath } from './uploads'
+import { UPLOAD_DIR, ensureUploadDir, resolveUploadPath } from './uploads'
 
 /** 每天最多自动备份 1 份；保留最近 N 天 */
 const KEEP_DAYS = 14
 
-export type BackupImage = {
-  mime: string
-  data: string
-}
-
-export type BackupPayload = {
-  version: 1 | 2
+type BackupPayload = {
+  version: 1
   exportedAt: string
   note: { content: string; updatedAt: string }
   todos: Array<{
@@ -29,8 +25,6 @@ export type BackupPayload = {
     deletedAt: string | null
     hiddenAt: string | null
   }>
-  /** filename → base64；v2 起打包本地上传图片 */
-  images?: Record<string, BackupImage>
 }
 
 function todayKey(date = new Date()): string {
@@ -81,59 +75,13 @@ export function ensureDailyBackup(force = false): { created: boolean; path: stri
   }
 }
 
-function collectUploadImages(): Record<string, BackupImage> {
-  ensureUploadDir()
-  const images: Record<string, BackupImage> = {}
-  if (!fs.existsSync(UPLOAD_DIR)) return images
-
-  for (const name of fs.readdirSync(UPLOAD_DIR)) {
-    const full = resolveUploadPath(name)
-    if (!full) continue
-    const buf = fs.readFileSync(full)
-    images[name] = {
-      mime: contentTypeFor(name),
-      data: buf.toString('base64'),
-    }
-  }
-  return images
-}
-
-function restoreUploadImages(images: Record<string, BackupImage> | undefined) {
-  ensureUploadDir()
-
-  // 导入即覆盖：先清空现有上传图
-  for (const name of fs.readdirSync(UPLOAD_DIR)) {
-    const full = resolveUploadPath(name)
-    if (full) {
-      try {
-        fs.unlinkSync(full)
-      } catch {
-        // ignore
-      }
-    }
-  }
-
-  if (!images) return 0
-
-  let count = 0
-  for (const [name, item] of Object.entries(images)) {
-    if (!item || typeof item.data !== 'string') continue
-    if (!/^[a-zA-Z0-9._-]+$/.test(name)) continue
-    const full = path.join(UPLOAD_DIR, path.basename(name))
-    fs.writeFileSync(full, Buffer.from(item.data, 'base64'))
-    count += 1
-  }
-  return count
-}
-
-export function buildExportPayload(): BackupPayload {
+function buildDataPayload(): BackupPayload {
   const db = getDb()
   const note = getNote()
   const rows = db.prepare('SELECT * FROM todos ORDER BY id ASC').all() as TodoRow[]
-  const images = collectUploadImages()
 
   return {
-    version: 2,
+    version: 1,
     exportedAt: nowIso(),
     note: {
       content: note.content,
@@ -152,7 +100,6 @@ export function buildExportPayload(): BackupPayload {
       deletedAt: row.deleted_at,
       hiddenAt: row.hidden_at,
     })),
-    images,
   }
 }
 
@@ -161,16 +108,26 @@ function isPriority(value: unknown): value is TodoPriority | null {
   return value === 'P0' || value === 'P1' || value === 'P2' || value === 'P3'
 }
 
-export function importBackupPayload(raw: unknown): { todoCount: number; imageCount: number } {
-  if (!raw || typeof raw !== 'object') throw new Error('备份文件格式无效')
-  const data = raw as Partial<BackupPayload>
-  if (data.version !== 1 && data.version !== 2) throw new Error('不支持的备份版本')
+function clearUploadDir() {
+  ensureUploadDir()
+  for (const name of fs.readdirSync(UPLOAD_DIR)) {
+    const full = resolveUploadPath(name)
+    if (full) {
+      try {
+        fs.unlinkSync(full)
+      } catch {
+        // ignore
+      }
+    }
+  }
+}
+
+function applyPayloadData(data: BackupPayload): number {
   if (!data.note || typeof data.note.content !== 'string') throw new Error('缺少笔记数据')
   if (!Array.isArray(data.todos)) throw new Error('缺少任务数据')
 
   const db = getDb()
   const ts = nowIso()
-
   const insert = db.prepare(
     `
     INSERT INTO todos (
@@ -182,7 +139,7 @@ export function importBackupPayload(raw: unknown): { todoCount: number; imageCou
 
   const run = db.transaction(() => {
     db.prepare('DELETE FROM todos').run()
-    for (const item of data.todos!) {
+    for (const item of data.todos) {
       if (!item || typeof item.content !== 'string' || !item.content.trim()) continue
       if (!isPriority(item.priority ?? null)) throw new Error('任务优先级无效')
       insert.run(
@@ -199,14 +156,72 @@ export function importBackupPayload(raw: unknown): { todoCount: number; imageCou
         item.hiddenAt ?? null,
       )
     }
-    saveNote(data.note!.content)
+    saveNote(data.note.content)
+  })
+  run()
+
+  return data.todos.filter((t) => t && typeof t.content === 'string' && t.content.trim()).length
+}
+
+/** 导出 zip：data.json + uploads/* */
+export async function buildExportZip(): Promise<{ filename: string; buffer: Buffer }> {
+  const payload = buildDataPayload()
+  const zip = new JSZip()
+  zip.file('data.json', JSON.stringify(payload, null, 2))
+
+  ensureUploadDir()
+  const folder = zip.folder('uploads')
+  if (folder && fs.existsSync(UPLOAD_DIR)) {
+    for (const name of fs.readdirSync(UPLOAD_DIR)) {
+      const full = resolveUploadPath(name)
+      if (!full) continue
+      folder.file(name, fs.readFileSync(full))
+    }
+  }
+
+  const buffer = await zip.generateAsync({
+    type: 'nodebuffer',
+    compression: 'DEFLATE',
+    compressionOptions: { level: 6 },
   })
 
-  run()
-  const imageCount = restoreUploadImages(data.images)
-  ensureDailyBackup(true)
+  const day = payload.exportedAt.slice(0, 10)
   return {
-    todoCount: data.todos.filter((t) => t && typeof t.content === 'string' && t.content.trim()).length,
-    imageCount,
+    filename: `workbench-backup-${day}.zip`,
+    buffer: Buffer.from(buffer),
   }
+}
+
+/** 导入 zip：data.json + uploads/* */
+export async function importBackupZip(buffer: Buffer): Promise<{ todoCount: number; imageCount: number }> {
+  const zip = await JSZip.loadAsync(buffer)
+  const dataFile = zip.file('data.json')
+  if (!dataFile) throw new Error('压缩包内缺少 data.json')
+
+  let data: BackupPayload
+  try {
+    data = JSON.parse(await dataFile.async('string')) as BackupPayload
+  } catch {
+    throw new Error('data.json 不是合法 JSON')
+  }
+
+  if (data.version !== 1) throw new Error('不支持的备份版本')
+
+  clearUploadDir()
+  const todoCount = applyPayloadData(data)
+
+  let imageCount = 0
+  const uploadFiles = Object.values(zip.files).filter(
+    (f) => !f.dir && /^uploads\/[^/]+$/.test(f.name.replace(/\\/g, '/')),
+  )
+  for (const file of uploadFiles) {
+    const name = path.basename(file.name)
+    if (!/^[a-zA-Z0-9._-]+$/.test(name)) continue
+    const bytes = await file.async('nodebuffer')
+    fs.writeFileSync(path.join(UPLOAD_DIR, name), bytes)
+    imageCount += 1
+  }
+
+  ensureDailyBackup(true)
+  return { todoCount, imageCount }
 }

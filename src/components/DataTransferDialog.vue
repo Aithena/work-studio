@@ -10,18 +10,18 @@
     <template #header>
       <div class="dialog-head">
         <div class="title">导入 / 导出</div>
-        <div class="sub">导出包含任务、笔记与本地图片；导入将覆盖现有数据</div>
+        <div class="sub">导出为 zip（含任务、笔记与图片）；导入将覆盖现有数据</div>
       </div>
     </template>
 
     <div v-if="mode === 'choose'" class="choices">
       <button class="choice" type="button" :disabled="busy" @click="doExport">
         <span class="choice-title">导出数据</span>
-        <span class="choice-desc">下载任务、笔记与本地图片备份</span>
+        <span class="choice-desc">下载 zip 压缩包（data.json + uploads）</span>
       </button>
       <button class="choice" type="button" :disabled="busy" @click="mode = 'import'">
         <span class="choice-title">导入数据</span>
-        <span class="choice-desc">从备份 JSON 恢复，将覆盖现有数据与图片</span>
+        <span class="choice-desc">从 zip 备份恢复，将覆盖现有数据</span>
       </button>
     </div>
 
@@ -31,7 +31,7 @@
         ref="fileRef"
         class="file-input"
         type="file"
-        accept="application/json,.json"
+        accept=".zip,application/zip"
         @change="onFileChange"
       />
       <div v-if="fileName" class="file-name">已选择：{{ fileName }}</div>
@@ -39,7 +39,13 @@
 
     <template #footer>
       <div class="footer">
-        <button v-if="mode === 'import'" class="btn ghost" type="button" :disabled="busy" @click="mode = 'choose'">
+        <button
+          v-if="mode === 'import'"
+          class="btn ghost"
+          type="button"
+          :disabled="busy"
+          @click="mode = 'choose'"
+        >
           返回
         </button>
         <button class="btn ghost" type="button" :disabled="busy" @click="close">取消</button>
@@ -47,7 +53,7 @@
           v-if="mode === 'import'"
           class="btn primary"
           type="button"
-          :disabled="busy || !pendingPayload"
+          :disabled="busy || !pendingFile"
           @click="doImport"
         >
           {{ busy ? '导入中…' : '确认导入' }}
@@ -60,7 +66,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { ElDialog, ElMessage, ElMessageBox } from 'element-plus'
-import { fetchExportBackup, importBackup, type BackupPayload } from '../api/backup'
+import { downloadExportZip, importBackupFile } from '../api/backup'
 
 const props = defineProps<{
   modelValue: boolean
@@ -73,7 +79,7 @@ const emit = defineEmits<{
 const mode = ref<'choose' | 'import'>('choose')
 const busy = ref(false)
 const fileName = ref('')
-const pendingPayload = ref<BackupPayload | null>(null)
+const pendingFile = ref<File | null>(null)
 const fileRef = ref<HTMLInputElement | null>(null)
 
 watch(
@@ -83,7 +89,7 @@ watch(
     mode.value = 'choose'
     busy.value = false
     fileName.value = ''
-    pendingPayload.value = null
+    pendingFile.value = null
   },
 )
 
@@ -94,15 +100,14 @@ function close() {
 async function doExport() {
   busy.value = true
   try {
-    const { filename, payload } = await fetchExportBackup()
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' })
+    const { blob, filename } = await downloadExportZip()
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
     a.download = filename
     a.click()
     URL.revokeObjectURL(url)
-    ElMessage.success('已导出备份文件')
+    ElMessage.success('已导出 zip 备份')
     close()
   } catch (error) {
     ElMessage.error(error instanceof Error ? error.message : '导出失败')
@@ -114,33 +119,15 @@ async function doExport() {
 function onFileChange(event: Event) {
   const input = event.target as HTMLInputElement
   const file = input.files?.[0]
-  pendingPayload.value = null
+  pendingFile.value = null
   fileName.value = ''
   if (!file) return
-
-  const reader = new FileReader()
-  reader.onload = () => {
-    try {
-      const parsed = JSON.parse(String(reader.result)) as BackupPayload
-      if (
-        (parsed?.version !== 1 && parsed?.version !== 2) ||
-        !parsed.note ||
-        !Array.isArray(parsed.todos)
-      ) {
-        throw new Error('不是有效的工作台备份文件')
-      }
-      pendingPayload.value = parsed
-      fileName.value = file.name
-    } catch (error) {
-      ElMessage.error(error instanceof Error ? error.message : '无法读取备份文件')
-      input.value = ''
-    }
-  }
-  reader.readAsText(file, 'utf-8')
+  pendingFile.value = file
+  fileName.value = file.name
 }
 
 async function doImport() {
-  if (!pendingPayload.value) return
+  if (!pendingFile.value) return
   try {
     await ElMessageBox.confirm(
       '导入将覆盖当前任务、笔记与本地图片，此操作不可撤销。',
@@ -158,7 +145,7 @@ async function doImport() {
 
   busy.value = true
   try {
-    const result = await importBackup(pendingPayload.value)
+    const result = await importBackupFile(pendingFile.value)
     const imgTip = result.imageCount > 0 ? `，${result.imageCount} 张图片` : ''
     ElMessage.success(`已导入 ${result.todoCount} 条任务${imgTip}`)
     close()
