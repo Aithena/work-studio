@@ -1,5 +1,13 @@
 # Start work-studio in production mode (single port)
 # Default port 18811
+#
+# Usage:
+#   ./start-workbench.ps1              # boot / silent: no browser
+#   ./start-workbench.ps1 -OpenBrowser # manual: open browser
+
+param(
+  [switch]$OpenBrowser
+)
 
 $ErrorActionPreference = 'Stop'
 $Root = Split-Path -Parent $PSScriptRoot
@@ -19,12 +27,14 @@ function Write-Log([string]$Message) {
   Add-Content -Path $LogFile -Value $line -Encoding UTF8
 }
 
-Write-Log "starting work-studio at $Url"
+Write-Log "starting work-studio at $Url (OpenBrowser=$OpenBrowser)"
 
 $listening = Get-NetTCPConnection -LocalPort ([int]$Port) -State Listen -ErrorAction SilentlyContinue
 if ($listening) {
-  Write-Log "port $Port already in use, open browser only"
-  Start-Process $Url
+  Write-Log "port $Port already in use, skip start"
+  if ($OpenBrowser) {
+    Start-Process $Url
+  }
   exit 0
 }
 
@@ -69,9 +79,12 @@ for ($i = 0; $i -lt 40; $i++) {
 }
 
 if ($ready) {
-  Write-Log 'ready, opening browser'
+  Write-Log "ready at $Url"
 } else {
-  Write-Log 'server not ready in time, still opening browser'
+  Write-Log "server not ready in time; check $Url later"
 }
 
-Start-Process $Url
+if ($OpenBrowser) {
+  Write-Log 'opening browser'
+  Start-Process $Url
+}
