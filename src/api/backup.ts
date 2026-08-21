@@ -1,10 +1,16 @@
 import { apiGet, apiSend } from './client'
 
+export type BackupImage = {
+  mime: string
+  data: string
+}
+
 export type BackupPayload = {
-  version: 1
+  version: 1 | 2
   exportedAt: string
   note: { content: string; updatedAt: string }
   todos: unknown[]
+  images?: Record<string, BackupImage>
 }
 
 export function fetchExportBackup() {
@@ -12,5 +18,5 @@ export function fetchExportBackup() {
 }
 
 export function importBackup(payload: unknown) {
-  return apiSend<{ todoCount: number }>('/api/backup/import', 'POST', payload)
+  return apiSend<{ todoCount: number; imageCount: number }>('/api/backup/import', 'POST', payload)
 }

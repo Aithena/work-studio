@@ -20,11 +20,19 @@
         role="dialog"
         aria-label="图片预览"
         @click="closePreview"
+        @wheel.prevent="onPreviewWheel"
       >
         <button class="lightbox-close" type="button" aria-label="关闭" @click="closePreview">
           ×
         </button>
-        <img class="lightbox-img" :src="previewSrc" alt="预览" @click.stop />
+        <img
+          ref="previewImgRef"
+          class="lightbox-img"
+          :src="previewSrc"
+          alt="预览"
+          :style="previewImgStyle"
+          @click.stop
+        />
       </div>
     </Teleport>
   </section>
@@ -49,11 +57,22 @@ const emit = defineEmits<{
 
 const elRef = ref<HTMLElement | null>(null)
 const previewSrc = ref<string | null>(null)
+const previewImgRef = ref<HTMLImageElement | null>(null)
+const previewScale = ref(1)
+const previewX = ref(0)
+const previewY = ref(0)
 let editor: AiEditor | null = null
 let syncing = false
 
+const PREVIEW_MIN = 0.4
+const PREVIEW_MAX = 8
+
 const PREVIEW_ICON =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M16 3H22V9H20V5H16V3ZM2 3H8V5H4V9H2V3ZM20 19V15H22V21H16V19H20ZM4 19H8V21H2V15H4V19ZM12 8C14.7614 8 17 10.2386 17 13C17 15.7614 14.7614 18 12 18C9.23858 18 7 15.7614 7 13C7 10.2386 9.23858 8 12 8ZM12 10C10.3431 10 9 11.3431 9 13C9 14.6569 10.3431 16 12 16C13.6569 16 15 14.6569 15 13C15 11.3431 13.6569 10 12 10Z"/></svg>'
+
+const previewImgStyle = computed(() => ({
+  transform: `translate3d(${previewX.value}px, ${previewY.value}px, 0) scale(${previewScale.value})`,
+}))
 
 const html = computed(() => props.modelValue || '')
 const showEmpty = computed(() => {
@@ -70,13 +89,39 @@ function focusEditor() {
   root?.focus()
 }
 
+function resetPreviewTransform() {
+  previewScale.value = 1
+  previewX.value = 0
+  previewY.value = 0
+}
+
 function openPreview(src: string) {
   if (!src) return
+  resetPreviewTransform()
   previewSrc.value = src
 }
 
 function closePreview() {
   previewSrc.value = null
+  resetPreviewTransform()
+}
+
+function onPreviewWheel(event: WheelEvent) {
+  const img = previewImgRef.value
+  if (!img) return
+
+  const factor = event.deltaY < 0 ? 1.12 : 1 / 1.12
+  const next = Math.min(PREVIEW_MAX, Math.max(PREVIEW_MIN, previewScale.value * factor))
+  if (next === previewScale.value) return
+
+  const rect = img.getBoundingClientRect()
+  const ratio = next / previewScale.value
+  const offsetX = event.clientX - rect.left
+  const offsetY = event.clientY - rect.top
+
+  previewX.value += (offsetX - rect.width / 2) * (1 - ratio)
+  previewY.value += (offsetY - rect.height / 2) * (1 - ratio)
+  previewScale.value = next
 }
 
 function previewFromEditor(instance: AiEditor) {
@@ -294,6 +339,11 @@ defineExpose({
   box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
   cursor: default;
   background: #111;
+  transform-origin: center center;
+  will-change: transform;
+  transition: none;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .lightbox-close {

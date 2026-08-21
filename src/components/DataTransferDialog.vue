@@ -10,23 +10,23 @@
     <template #header>
       <div class="dialog-head">
         <div class="title">导入 / 导出</div>
-        <div class="sub">导出可下载 JSON；导入将覆盖当前任务与笔记</div>
+        <div class="sub">导出包含任务、笔记与本地图片；导入将覆盖现有数据</div>
       </div>
     </template>
 
     <div v-if="mode === 'choose'" class="choices">
       <button class="choice" type="button" :disabled="busy" @click="doExport">
         <span class="choice-title">导出数据</span>
-        <span class="choice-desc">下载当前任务与笔记备份文件</span>
+        <span class="choice-desc">下载任务、笔记与本地图片备份</span>
       </button>
       <button class="choice" type="button" :disabled="busy" @click="mode = 'import'">
         <span class="choice-title">导入数据</span>
-        <span class="choice-desc">从备份 JSON 恢复，将覆盖现有数据</span>
+        <span class="choice-desc">从备份 JSON 恢复，将覆盖现有数据与图片</span>
       </button>
     </div>
 
     <div v-else class="import-pane">
-      <p class="warn">导入会覆盖当前全部任务与笔记，建议先导出一份备份。</p>
+      <p class="warn">导入会覆盖当前全部任务、笔记与本地图片，建议先导出一份备份。</p>
       <input
         ref="fileRef"
         class="file-input"
@@ -122,7 +122,11 @@ function onFileChange(event: Event) {
   reader.onload = () => {
     try {
       const parsed = JSON.parse(String(reader.result)) as BackupPayload
-      if (parsed?.version !== 1 || !parsed.note || !Array.isArray(parsed.todos)) {
+      if (
+        (parsed?.version !== 1 && parsed?.version !== 2) ||
+        !parsed.note ||
+        !Array.isArray(parsed.todos)
+      ) {
         throw new Error('不是有效的工作台备份文件')
       }
       pendingPayload.value = parsed
@@ -138,12 +142,16 @@ function onFileChange(event: Event) {
 async function doImport() {
   if (!pendingPayload.value) return
   try {
-    await ElMessageBox.confirm('导入将覆盖当前任务与笔记，此操作不可撤销。', '确认导入？', {
-      confirmButtonText: '覆盖导入',
-      cancelButtonText: '取消',
-      type: 'warning',
-      customClass: 'wb-message-box',
-    })
+    await ElMessageBox.confirm(
+      '导入将覆盖当前任务、笔记与本地图片，此操作不可撤销。',
+      '确认导入？',
+      {
+        confirmButtonText: '覆盖导入',
+        cancelButtonText: '取消',
+        type: 'warning',
+        customClass: 'wb-message-box',
+      },
+    )
   } catch {
     return
   }
@@ -151,7 +159,8 @@ async function doImport() {
   busy.value = true
   try {
     const result = await importBackup(pendingPayload.value)
-    ElMessage.success(`已导入 ${result.todoCount} 条任务`)
+    const imgTip = result.imageCount > 0 ? `，${result.imageCount} 张图片` : ''
+    ElMessage.success(`已导入 ${result.todoCount} 条任务${imgTip}`)
     close()
     window.location.reload()
   } catch (error) {
