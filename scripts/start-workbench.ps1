@@ -2,12 +2,36 @@
 # Default port 18899
 #
 # Usage:
-#   ./start-workbench.ps1              # boot / silent: no browser
-#   ./start-workbench.ps1 -OpenBrowser # manual: open browser
+#   ./start-workbench.ps1              # boot / silent: no window
+#   ./start-workbench.ps1 -OpenBrowser # manual: open app window (--app)
 
 param(
   [switch]$OpenBrowser
 )
+
+function Resolve-AppBrowser {
+  $candidates = @(
+    "${env:ProgramFiles(x86)}\Microsoft\Edge\Application\msedge.exe",
+    "$env:ProgramFiles\Microsoft\Edge\Application\msedge.exe",
+    "$env:ProgramFiles\Google\Chrome\Application\chrome.exe",
+    "${env:ProgramFiles(x86)}\Google\Chrome\Application\chrome.exe"
+  )
+  foreach ($path in $candidates) {
+    if ($path -and (Test-Path $path)) { return $path }
+  }
+  return $null
+}
+
+function Open-AppWindow([string]$TargetUrl) {
+  $browser = Resolve-AppBrowser
+  if ($browser) {
+    Start-Process -FilePath $browser -ArgumentList "--app=$TargetUrl"
+    Write-Log "opened app window via $browser"
+  } else {
+    Write-Log 'Edge/Chrome not found, fallback to default browser'
+    Start-Process $TargetUrl
+  }
+}
 
 $ErrorActionPreference = 'Stop'
 $Root = Split-Path -Parent $PSScriptRoot
@@ -46,7 +70,7 @@ $listening = Get-NetTCPConnection -LocalPort ([int]$Port) -State Listen -ErrorAc
 if ($listening) {
   Write-Log "port $Port already in use, skip start"
   if ($OpenBrowser) {
-    Start-Process $Url
+    Open-AppWindow $Url
   }
   exit 0
 }
@@ -69,20 +93,36 @@ if (-not (Test-Path (Join-Path $Root 'dist\index.html'))) {
 $env:NODE_ENV = 'production'
 $env:PORT = $Port
 
-# Prefer local tsx.cmd — never Start-Process pnpm.ps1 (opens in Notepad)
-$tsxCmd = Join-Path $Root 'node_modules\.bin\tsx.cmd'
-if (-not (Test-Path $tsxCmd)) {
-  Write-Log "tsx.cmd missing: $tsxCmd"
+# Start via node.exe + tsx CLI (not tsx.cmd) so Windows does not open a visible cmd window
+$nodeCmd = (Get-Command node -ErrorAction SilentlyContinue).Source
+if (-not $nodeCmd) {
+  Write-Log 'node not found in PATH'
   exit 1
 }
 
-$proc = Start-Process -FilePath $tsxCmd `
-  -ArgumentList @('server/index.ts') `
-  -WorkingDirectory $Root `
-  -WindowStyle Minimized `
-  -PassThru
+$tsxCli = Join-Path $Root 'node_modules\tsx\dist\cli.mjs'
+if (-not (Test-Path $tsxCli)) {
+  Write-Log "tsx CLI missing: $tsxCli"
+  exit 1
+}
 
-Write-Log "server pid=$($proc.Id) via $tsxCmd"
+$psi = New-Object System.Diagnostics.ProcessStartInfo
+$psi.FileName = $nodeCmd
+$psi.Arguments = "`"$tsxCli`" server/index.ts"
+$psi.WorkingDirectory = $Root
+$psi.UseShellExecute = $false
+$psi.CreateNoWindow = $true
+$psi.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
+$psi.EnvironmentVariables['NODE_ENV'] = 'production'
+$psi.EnvironmentVariables['PORT'] = $Port
+
+$proc = [System.Diagnostics.Process]::Start($psi)
+if (-not $proc) {
+  Write-Log 'failed to start server process'
+  exit 1
+}
+
+Write-Log "server pid=$($proc.Id) via node + tsx (hidden)"
 
 $ready = $false
 for ($i = 0; $i -lt 40; $i++) {
@@ -105,6 +145,6 @@ if ($ready) {
 }
 
 if ($OpenBrowser) {
-  Write-Log 'opening browser'
-  Start-Process $Url
+  Write-Log 'opening app window'
+  Open-AppWindow $Url
 }

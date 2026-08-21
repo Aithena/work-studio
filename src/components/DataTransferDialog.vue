@@ -28,7 +28,6 @@
     <div v-else class="import-pane">
       <p class="warn">导入会覆盖当前全部任务、笔记与本地图片，建议先导出一份备份。</p>
       <input
-        ref="fileRef"
         class="file-input"
         type="file"
         accept=".zip,application/zip"
@@ -80,7 +79,6 @@ const mode = ref<'choose' | 'import'>('choose')
 const busy = ref(false)
 const fileName = ref('')
 const pendingFile = ref<File | null>(null)
-const fileRef = ref<HTMLInputElement | null>(null)
 
 watch(
   () => props.modelValue,
