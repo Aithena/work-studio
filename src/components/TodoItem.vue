@@ -77,6 +77,7 @@ function commit() {
 
 <style scoped lang="less">
 .todo-item {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -90,6 +91,9 @@ function commit() {
 
     .drag-handle,
     .more {
+      opacity: 1;
+    }
+    .priority {
       opacity: 1;
     }
   }
@@ -149,9 +153,15 @@ function commit() {
 }
 
 .priority {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
   flex-shrink: 0;
   height: 16px;
   padding: 0 4px;
+  margin-top: 6px;
+  margin-right: 1px;
   border-radius: 4px;
   font-size: 10px;
   font-weight: 600;
