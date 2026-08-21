@@ -1,0 +1,65 @@
+.note-editor {
+  .aie-container {
+    border: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden !important;
+  }
+
+  .aie-container .aie-header {
+    border: 0 !important;
+    background: transparent !important;
+    padding: 6px 28px 4px !important;
+    opacity: 0.72;
+    flex-shrink: 0;
+    transition: opacity 160ms ease;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .aie-container .aie-header .aie-menu {
+    color: #8a8a86 !important;
+  }
+
+  .aie-content {
+    flex: 1;
+    min-height: 0;
+    height: calc(100% - 40px) !important;
+    padding: 20px !important;
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+    color: var(--color-text) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+      display: none;
+    }
+
+    p {
+      margin: 10px 0;
+      line-height: 18px;
+      min-height: 18px;
+    }
+  }
+
+  .aie-container .aie-footer,
+  .aie-container aie-footer {
+    display: none !important;
+  }
+
+  .aie-container .aie-header-item:hover {
+    background: rgba(0, 0, 0, 0.04) !important;
+    border-radius: 8px;
+  }
+}

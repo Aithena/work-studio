@@ -1,0 +1,11 @@
+node_modules
+dist
+data/*.db
+data/*.db-*
+.env
+*.local
+.DS_Store
+tsconfig.tsbuildinfo
+node_modules/.tmp
+src/auto-imports.d.ts
+src/components.d.ts
