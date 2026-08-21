@@ -11,6 +11,9 @@
     "typecheck": "vue-tsc -b && tsc -p tsconfig.server.json --noEmit",
     "postinstall": "node scripts/ensure-sqlite.mjs",
     "start": "tsx server/index.ts",
+    "autostart:install": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/autostart.ps1 install",
+    "autostart:uninstall": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/autostart.ps1 uninstall",
+    "autostart:run": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/start-workbench.ps1",
     "preview": "vite preview"
   },
   "engines": {

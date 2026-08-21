@@ -1,4 +1,6 @@
 import 'dotenv/config'
+import fs from 'node:fs'
+import path from 'node:path'
 import { serve } from '@hono/node-server'
 import { serveStatic } from '@hono/node-server/serve-static'
 import { Hono } from 'hono'
@@ -213,12 +215,15 @@ app.get('/api/activity/logs', (c) => {
 })
 
 if (process.env.NODE_ENV === 'production') {
-  app.use('/assets/*', serveStatic({ root: './dist' }))
-  app.get('*', serveStatic({ root: './dist' }))
+  app.use('/*', serveStatic({ root: './dist' }))
+  app.get('*', (c) => {
+    const indexPath = path.join(process.cwd(), 'dist', 'index.html')
+    return c.html(fs.readFileSync(indexPath, 'utf8'))
+  })
 }
 
 const port = Number(process.env.PORT || 8787)
 
 serve({ fetch: app.fetch, port, hostname: '127.0.0.1' }, (info) => {
-  console.log(`[work-studio] API http://127.0.0.1:${info.port}`)
+  console.log(`[work-studio] http://127.0.0.1:${info.port}`)
 })
