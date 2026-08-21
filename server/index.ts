@@ -10,6 +10,12 @@ import { listActivity, getMonthOverview, listOperationLogs } from './activity'
 import { getNote, saveNote } from './notes'
 import { ensureDailyBackup, buildExportPayload, importBackupPayload } from './backup'
 import {
+  contentTypeFor,
+  resolveUploadPath,
+  saveUploadedImage,
+  ensureUploadDir,
+} from './uploads'
+import {
   createTodo,
   createTodos,
   getTodo,
@@ -269,6 +275,46 @@ app.post('/api/backup/import', async (c) => {
   }
 })
 
+/** AiEditor 要求直接返回 errorCode 结构，不走统一 { success } 包裹 */
+app.post('/api/image/upload', async (c) => {
+  try {
+    const body = await c.req.parseBody()
+    const file = body.image
+    if (!(file instanceof File)) {
+      return c.json({ errorCode: 1, errorMessage: '缺少图片文件' }, 400)
+    }
+    const saved = await saveUploadedImage(file)
+    return c.json({
+      errorCode: 0,
+      data: {
+        src: saved.src,
+        alt: file.name || 'image',
+      },
+    })
+  } catch (error) {
+    return c.json(
+      {
+        errorCode: 1,
+        errorMessage: error instanceof Error ? error.message : '上传失败',
+      },
+      400,
+    )
+  }
+})
+
+app.get('/api/uploads/:name', (c) => {
+  const name = c.req.param('name')
+  const full = resolveUploadPath(name)
+  if (!full) return c.json(fail('文件不存在'), 404)
+  const buf = fs.readFileSync(full)
+  return new Response(buf, {
+    headers: {
+      'Content-Type': contentTypeFor(name),
+      'Cache-Control': 'public, max-age=31536000, immutable',
+    },
+  })
+})
+
 if (process.env.NODE_ENV === 'production') {
   app.use('/*', serveStatic({ root: './dist' }))
   app.get('*', (c) => {
@@ -279,6 +325,7 @@ if (process.env.NODE_ENV === 'production') {
 
 const port = Number(process.env.PORT || 8787)
 
+ensureUploadDir()
 ensureDailyBackup()
 
 serve({ fetch: app.fetch, port, hostname: '127.0.0.1' }, (info) => {

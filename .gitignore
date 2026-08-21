@@ -2,6 +2,8 @@ node_modules
 dist
 data/*.db
 data/*.db-*
+data/uploads/
+data/backups/
 .env
 *.local
 .DS_Store
