@@ -8,6 +8,7 @@ import { getDb, type TodoRow } from './db'
 import { proxyChatCompletions } from './ai'
 import { listActivity, getMonthOverview, listOperationLogs } from './activity'
 import { getNote, saveNote } from './notes'
+import { ensureDailyBackup, buildExportPayload, importBackupPayload } from './backup'
 import {
   createTodo,
   createTodos,
@@ -245,6 +246,29 @@ app.get('/api/activity/logs', (c) => {
   return c.json(ok({ items: listOperationLogs(limit) }))
 })
 
+app.get('/api/backup/export', (c) => {
+  const payload = buildExportPayload()
+  const day = payload.exportedAt.slice(0, 10)
+  const filename = `workbench-backup-${day}.json`
+  return c.json(ok({ filename, payload }))
+})
+
+app.post('/api/backup/import', async (c) => {
+  let body: unknown
+  try {
+    body = await c.req.json()
+  } catch {
+    return c.json(fail('请求体不是合法 JSON'), 400)
+  }
+
+  try {
+    const result = importBackupPayload(body)
+    return c.json(ok(result))
+  } catch (error) {
+    return c.json(fail(error instanceof Error ? error.message : '导入失败'), 400)
+  }
+})
+
 if (process.env.NODE_ENV === 'production') {
   app.use('/*', serveStatic({ root: './dist' }))
   app.get('*', (c) => {
@@ -254,6 +278,8 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 const port = Number(process.env.PORT || 8787)
+
+ensureDailyBackup()
 
 serve({ fetch: app.fetch, port, hostname: '127.0.0.1' }, (info) => {
   console.log(`[work-studio] http://127.0.0.1:${info.port}`)

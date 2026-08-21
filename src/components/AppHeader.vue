@@ -15,6 +15,15 @@
       <button
         class="icon-btn"
         type="button"
+        title="导入 / 导出"
+        aria-label="导入 / 导出"
+        @click="transferOpen = true"
+      >
+        <el-icon :size="16"><FolderOpened /></el-icon>
+      </button>
+      <button
+        class="icon-btn"
+        type="button"
         title="搜索任务 (Ctrl+K)"
         aria-label="搜索"
         @click="openSearch"
@@ -25,15 +34,17 @@
       <QuickLinksMenu />
     </div>
     <ActivityLogDialog v-model="logOpen" />
+    <DataTransferDialog v-model="transferOpen" />
   </header>
 </template>
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
-import { Notebook, Search } from '@element-plus/icons-vue'
+import { FolderOpened, Notebook, Search } from '@element-plus/icons-vue'
 import { ElIcon } from 'element-plus'
 import AccentPicker from './AccentPicker.vue'
 import ActivityLogDialog from './ActivityLogDialog.vue'
+import DataTransferDialog from './DataTransferDialog.vue'
 import QuickLinksMenu from './QuickLinksMenu.vue'
 import SaveStatus from './SaveStatus.vue'
 import type { SaveState } from '../types'
@@ -44,6 +55,7 @@ defineProps<{
 }>()
 
 const logOpen = ref(false)
+const transferOpen = ref(false)
 
 function openSearch() {
   window.dispatchEvent(new Event('workbench:search'))

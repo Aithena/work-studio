@@ -4,6 +4,9 @@ import Database from 'better-sqlite3'
 
 const DATA_DIR = path.join(process.cwd(), 'data')
 const DB_PATH = path.join(DATA_DIR, 'note.db')
+const BACKUP_DIR = path.join(DATA_DIR, 'backups')
+
+export { DATA_DIR, DB_PATH, BACKUP_DIR }
 
 export type TodoPriority = 'P0' | 'P1' | 'P2' | 'P3'
 
