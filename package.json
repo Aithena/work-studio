@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently -k -n server,web -c cyan,magenta \"pnpm dev:server\" \"pnpm dev:web\"",
     "dev:web": "vite",
-    "dev:server": "tsx watch server/index.ts",
+    "dev:server": "node --watch-path=./server --import tsx server/index.ts",
     "build": "vue-tsc -b && vite build",
     "typecheck": "vue-tsc -b && tsc -p tsconfig.server.json --noEmit",
     "postinstall": "node scripts/ensure-sqlite.mjs",

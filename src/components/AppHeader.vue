@@ -74,8 +74,8 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 
 <style scoped lang="less">
 .app-header {
-  height: 56px;
-  padding: 0 28px;
+  height: 36px;
+  padding: 0 20x;
   display: flex;
   align-items: center;
   justify-content: space-between;
