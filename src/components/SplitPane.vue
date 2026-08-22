@@ -85,7 +85,7 @@ onUnmounted(() => {
 }
 
 .pane {
-  min-width: 0;
+  min-width: 360px;
   min-height: 0;
   height: 100%;
 }
