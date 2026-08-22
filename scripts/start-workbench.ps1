@@ -1,5 +1,5 @@
 # Start work-studio in production mode (single port)
-# Default port 18899
+# Default port 18900
 #
 # Usage:
 #   ./start-workbench.ps1              # boot / silent: no window
@@ -37,7 +37,7 @@ $ErrorActionPreference = 'Stop'
 $Root = Split-Path -Parent $PSScriptRoot
 Set-Location $Root
 
-$Port = if ($env:WORK_STUDIO_PORT) { $env:WORK_STUDIO_PORT } else { '18899' }
+$Port = if ($env:WORK_STUDIO_PORT) { $env:WORK_STUDIO_PORT } else { '18900' }
 $Url = "http://127.0.0.1:$Port"
 $LogDir = Join-Path $Root 'data'
 $LogFile = Join-Path $LogDir 'autostart.log'

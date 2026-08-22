@@ -1,6 +1,6 @@
 <template>
   <header class="app-header">
-    <div class="brand">我的工作台</div>
+    <div class="brand"></div>
     <div class="actions">
       <SaveStatus :state="saveState" :saved-at="savedAt" />
       <button
