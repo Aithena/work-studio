@@ -40,10 +40,11 @@ const hint = computed(() => {
 .save-status {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  margin-right: 8px;
+  gap: 6px;
+  margin-right: 4px;
   color: var(--color-text-secondary);
-  font-size: 13px;
+  font-size: 12px;
+  white-space: nowrap;
   user-select: none;
 }
 

@@ -1,6 +1,5 @@
 <template>
   <div class="workspace">
-    <AppHeader :save-state="saveState" :saved-at="lastSavedAt" />
     <div class="workspace-body">
       <SplitPane>
         <template #left>
@@ -8,6 +7,11 @@
         </template>
         <template #right>
           <div class="right-pane">
+            <WorkbenchActions
+              class="pane-actions"
+              :save-state="saveState"
+              :saved-at="lastSavedAt"
+            />
             <NoteEditor
               ref="editorRef"
               class="editor"
@@ -25,10 +29,10 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { ElNotification } from 'element-plus'
-import AppHeader from '../components/AppHeader.vue'
 import NoteEditor from '../components/NoteEditor.vue'
 import SplitPane from '../components/SplitPane.vue'
 import TodoPanel from '../components/TodoPanel.vue'
+import WorkbenchActions from '../components/WorkbenchActions.vue'
 import { useNote } from '../composables/useNote'
 
 const { content, saveState, lastSavedAt, loaded, queueSave, load, saveNow } = useNote()
@@ -113,6 +117,7 @@ onUnmounted(() => {
 }
 
 .right-pane {
+  position: relative;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -120,6 +125,13 @@ onUnmounted(() => {
   min-height: 0;
   overflow: hidden;
   background: var(--color-surface);
+}
+
+.pane-actions {
+  position: absolute;
+  top: 6px;
+  right: 16px;
+  z-index: 8;
 }
 
 .editor {

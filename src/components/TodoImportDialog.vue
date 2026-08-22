@@ -4,6 +4,7 @@
     class="wb-dialog import-dialog"
     width="800px"
     align-center
+    append-to-body
     :show-close="true"
     @close="close"
   >

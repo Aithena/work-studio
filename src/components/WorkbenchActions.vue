@@ -1,41 +1,38 @@
 <template>
-  <header class="app-header">
-    <div class="brand"></div>
-    <div class="actions">
-      <SaveStatus :state="saveState" :saved-at="savedAt" />
-      <button
-        class="icon-btn"
-        type="button"
-        title="操作日志"
-        aria-label="操作日志"
-        @click="logOpen = true"
-      >
-        <el-icon :size="16"><Notebook /></el-icon>
-      </button>
-      <button
-        class="icon-btn"
-        type="button"
-        title="导入 / 导出"
-        aria-label="导入 / 导出"
-        @click="transferOpen = true"
-      >
-        <el-icon :size="16"><FolderOpened /></el-icon>
-      </button>
-      <button
-        class="icon-btn"
-        type="button"
-        title="搜索任务 (Ctrl+K)"
-        aria-label="搜索"
-        @click="openSearch"
-      >
-        <el-icon :size="16"><Search /></el-icon>
-      </button>
-      <AccentPicker />
-      <QuickLinksMenu />
-    </div>
+  <div class="workbench-actions">
+    <SaveStatus :state="saveState" :saved-at="savedAt" />
+    <button
+      class="icon-btn"
+      type="button"
+      title="操作日志"
+      aria-label="操作日志"
+      @click="logOpen = true"
+    >
+      <el-icon :size="16"><Notebook /></el-icon>
+    </button>
+    <button
+      class="icon-btn"
+      type="button"
+      title="导入 / 导出"
+      aria-label="导入 / 导出"
+      @click="transferOpen = true"
+    >
+      <el-icon :size="16"><FolderOpened /></el-icon>
+    </button>
+    <button
+      class="icon-btn"
+      type="button"
+      title="搜索任务 (Ctrl+K)"
+      aria-label="搜索"
+      @click="openSearch"
+    >
+      <el-icon :size="16"><Search /></el-icon>
+    </button>
+    <AccentPicker />
+    <QuickLinksMenu />
     <ActivityLogDialog v-model="logOpen" />
     <DataTransferDialog v-model="transferOpen" />
-  </header>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -73,32 +70,21 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 </script>
 
 <style scoped lang="less">
-.app-header {
-  height: 44px;
-  padding: 0 20x;
+.workbench-actions {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 4px;
   flex-shrink: 0;
-  border-bottom: 1px solid var(--color-border);
-  background: var(--color-page);
-}
 
-.brand {
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-}
-
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  :deep(.icon-btn) {
+    width: 28px;
+    height: 28px;
+  }
 }
 
 .icon-btn {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   display: inline-flex;
   align-items: center;
   justify-content: center;

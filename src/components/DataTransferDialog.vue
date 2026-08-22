@@ -4,6 +4,7 @@
     class="wb-dialog transfer-dialog"
     width="480px"
     align-center
+    append-to-body
     :show-close="true"
     @close="close"
   >

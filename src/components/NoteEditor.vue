@@ -362,7 +362,7 @@ defineExpose({
 
 .empty {
   position: absolute;
-  inset: 72px 0 0;
+  inset: 48px 0 0;
   padding: 8px 56px 48px;
   pointer-events: none;
 }

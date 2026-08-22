@@ -10,10 +10,10 @@
     overflow: hidden !important;
   }
 
-  .aie-container .aie-header {
+  .aie-container aie-header {
     border: 0 !important;
     background: transparent !important;
-    padding: 6px 28px 4px !important;
+    padding: 6px 280px 4px 28px !important;
     opacity: 0.72;
     flex-shrink: 0;
     transition: opacity 160ms ease;
@@ -23,7 +23,7 @@
     }
   }
 
-  .aie-container .aie-header .aie-menu {
+  .aie-container aie-header .aie-menu-item {
     color: #8a8a86 !important;
   }
 
@@ -58,7 +58,8 @@
     display: none !important;
   }
 
-  .aie-container .aie-header-item:hover {
+  .aie-container aie-header .aie-menu-item:hover,
+  .aie-container aie-header .aie-menu-item > div:hover:not([no-hover]) {
     background: rgba(0, 0, 0, 0.04) !important;
     border-radius: 8px;
   }

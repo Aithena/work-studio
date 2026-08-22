@@ -4,6 +4,7 @@
     class="wb-dialog activity-dialog"
     width="1040px"
     align-center
+    append-to-body
     destroy-on-close
     @close="close"
   >
