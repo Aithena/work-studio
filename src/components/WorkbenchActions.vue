@@ -10,7 +10,6 @@
     >
       <el-icon :size="16"><Search /></el-icon>
     </button>
-    <QuickLinksMenu />
     <button
       class="icon-btn"
       type="button"
@@ -29,6 +28,7 @@
     >
       <el-icon :size="16"><FolderOpened /></el-icon>
     </button>
+    <QuickLinksMenu />
     <button
       class="icon-btn"
       type="button"

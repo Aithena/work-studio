@@ -8,7 +8,7 @@
       :class="{ open }"
       @click="open = !open"
     >
-      <el-icon :size="16"><More /></el-icon>
+      <el-icon size="16"><Connection /></el-icon>
     </button>
     <div v-if="open" class="panel">
       <div class="panel-title">快捷链接</div>
@@ -29,7 +29,7 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
-import { More } from '@element-plus/icons-vue'
+import { Connection } from '@element-plus/icons-vue'
 import { ElIcon } from 'element-plus'
 
 const open = ref(false)
