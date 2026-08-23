@@ -250,7 +250,6 @@ function createEditor() {
       'image',
       '|',
       'ai',
-      'fullscreen',
     ],
     image: {
       allowBase64: false,
