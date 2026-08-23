@@ -7,6 +7,7 @@
         </template>
         <template #right>
           <div class="right-pane">
+            <NoteSwitcher class="pane-switcher" />
             <WorkbenchActions
               class="pane-actions"
               :save-state="saveState"
@@ -17,6 +18,7 @@
               class="editor"
               :model-value="content"
               :loaded="loaded"
+              :note-id="currentId"
               @change="onNoteChange"
             />
           </div>
@@ -30,12 +32,13 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { ElNotification } from 'element-plus'
 import NoteEditor from '../components/NoteEditor.vue'
+import NoteSwitcher from '../components/NoteSwitcher.vue'
 import SplitPane from '../components/SplitPane.vue'
 import TodoPanel from '../components/TodoPanel.vue'
 import WorkbenchActions from '../components/WorkbenchActions.vue'
 import { useNote } from '../composables/useNote'
 
-const { content, saveState, lastSavedAt, loaded, queueSave, load, saveNow } = useNote()
+const { content, currentId, saveState, lastSavedAt, loaded, queueSave, load, saveNow } = useNote()
 const editorRef = ref<{ getHtml: () => string } | null>(null)
 let savingManual = false
 
@@ -127,9 +130,16 @@ onUnmounted(() => {
   background: var(--color-surface);
 }
 
+.pane-switcher {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  z-index: 8;
+}
+
 .pane-actions {
   position: absolute;
-  top: 6px;
+  top: 10px;
   right: 16px;
   z-index: 8;
 }

@@ -15,6 +15,8 @@
     "autostart:uninstall": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/autostart.ps1 uninstall",
     "autostart:run": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/start-workbench.ps1 -OpenBrowser",
     "app": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/start-workbench.ps1 -OpenBrowser",
+    "desktop:install": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/desktop-shortcut.ps1 install",
+    "desktop:uninstall": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/desktop-shortcut.ps1 uninstall",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
     "tauri:build": "cmd /c scripts\\build-tauri.cmd",

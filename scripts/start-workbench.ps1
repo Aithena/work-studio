@@ -33,12 +33,28 @@ function Resolve-TauriExe {
   return $null
 }
 
+function Show-ExistingWindow {
+  $running = Get-Process -Name 'work-studio' -ErrorAction SilentlyContinue |
+    Where-Object { $_.MainWindowHandle -ne [IntPtr]::Zero } |
+    Select-Object -First 1
+  if (-not $running) { return $false }
+
+  if (-not ('Win32.AppWindow' -as [type])) {
+    Add-Type -Namespace Win32 -Name AppWindow -MemberDefinition @'
+      [DllImport("user32.dll")] public static extern bool SetForegroundWindow(IntPtr hWnd);
+      [DllImport("user32.dll")] public static extern bool ShowWindowAsync(IntPtr hWnd, int nCmdShow);
+'@
+  }
+  [void][Win32.AppWindow]::ShowWindowAsync($running.MainWindowHandle, 9)
+  [void][Win32.AppWindow]::SetForegroundWindow($running.MainWindowHandle)
+  return $true
+}
+
 function Open-AppWindow([string]$TargetUrl) {
   $exe = Resolve-TauriExe
   if ($exe) {
-    $running = Get-Process -Name 'work-studio' -ErrorAction SilentlyContinue
-    if ($running) {
-      Write-Log 'tauri window already running'
+    if (Show-ExistingWindow) {
+      Write-Log 'tauri window already running, focused'
       return
     }
     Start-Process -FilePath $exe

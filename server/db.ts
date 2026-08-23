@@ -27,7 +27,10 @@ export type TodoRow = {
 
 export type NoteRow = {
   id: number
+  title: string
   content: string
+  disabled: number
+  created_at: string
   updated_at: string
 }
 
@@ -65,7 +68,10 @@ export function getDb(): Database.Database {
 
     CREATE TABLE IF NOT EXISTS notes (
       id INTEGER PRIMARY KEY,
+      title TEXT NOT NULL DEFAULT '默认笔记',
       content TEXT NOT NULL DEFAULT '',
+      disabled INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL
     );
 
@@ -112,12 +118,27 @@ export function getDb(): Database.Database {
     db.exec(`ALTER TABLE todos ADD COLUMN hidden_at TEXT`)
   }
 
+  const noteCols = db.prepare(`PRAGMA table_info(notes)`).all() as { name: string }[]
+  if (noteCols.length > 0 && !noteCols.some((col) => col.name === 'title')) {
+    db.exec(`ALTER TABLE notes ADD COLUMN title TEXT NOT NULL DEFAULT '默认笔记'`)
+  }
+  if (noteCols.length > 0 && !noteCols.some((col) => col.name === 'disabled')) {
+    db.exec(`ALTER TABLE notes ADD COLUMN disabled INTEGER NOT NULL DEFAULT 0`)
+  }
+  if (noteCols.length > 0 && !noteCols.some((col) => col.name === 'created_at')) {
+    db.exec(`ALTER TABLE notes ADD COLUMN created_at TEXT`)
+  }
+  db.prepare(
+    `UPDATE notes SET created_at = COALESCE(NULLIF(created_at, ''), updated_at) WHERE created_at IS NULL OR created_at = ''`,
+  ).run()
+  db.prepare(`UPDATE notes SET title = '默认笔记' WHERE (title IS NULL OR title = '') AND id = 1`).run()
+
+  const ts = new Date().toISOString()
   const note = db.prepare('SELECT id FROM notes WHERE id = 1').get()
   if (!note) {
-    db.prepare('INSERT INTO notes (id, content, updated_at) VALUES (1, ?, ?)').run(
-      '',
-      new Date().toISOString(),
-    )
+    db.prepare(
+      'INSERT INTO notes (id, title, content, disabled, created_at, updated_at) VALUES (1, ?, ?, 0, ?, ?)',
+    ).run('默认笔记', '', ts, ts)
   }
 
   return db

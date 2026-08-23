@@ -48,6 +48,7 @@ import '../styles/editor.less'
 const props = defineProps<{
   modelValue: string
   loaded: boolean
+  noteId?: number
 }>()
 
 const emit = defineEmits<{
@@ -153,7 +154,10 @@ const previewMenuItem: BubbleMenuItem = {
   onClick: (instance) => previewFromEditor(instance),
 }
 
-const SCROLL_KEY = 'workbench:note-scroll'
+function scrollKey(id = props.noteId) {
+  return id != null ? `workbench:note-scroll:${id}` : 'workbench:note-scroll'
+}
+
 let scrollSaveTimer: ReturnType<typeof setTimeout> | null = null
 let created = false
 
@@ -161,19 +165,19 @@ function getScrollEl(): HTMLElement | null {
   return elRef.value?.querySelector('.aie-content') as HTMLElement | null
 }
 
-function saveScrollPosition() {
+function saveScrollPosition(id = props.noteId) {
   const el = getScrollEl()
   if (!el) return
   try {
-    localStorage.setItem(SCROLL_KEY, String(Math.round(el.scrollTop)))
+    localStorage.setItem(scrollKey(id), String(Math.round(el.scrollTop)))
   } catch {
     // ignore
   }
 }
 
-function readSavedScroll(): number | null {
+function readSavedScroll(id = props.noteId): number | null {
   try {
-    const raw = localStorage.getItem(SCROLL_KEY)
+    const raw = localStorage.getItem(scrollKey(id))
     if (raw == null) return null
     const top = Number(raw)
     return Number.isFinite(top) ? Math.max(0, top) : null
@@ -302,9 +306,13 @@ function createEditor() {
   applyRestoredScroll()
 }
 
+function onPageHide() {
+  saveScrollPosition()
+}
+
 onMounted(() => {
   window.addEventListener('keydown', onKeydown)
-  window.addEventListener('pagehide', saveScrollPosition)
+  window.addEventListener('pagehide', onPageHide)
   createEditor()
 })
 
@@ -316,11 +324,27 @@ watch(
 )
 
 watch(
-  () => props.modelValue,
-  (value) => {
+  () => [props.noteId, props.modelValue] as const,
+  ([id, value], prev) => {
     if (!editor) return
+    const prevId = prev?.[0]
+    const switched = prevId != null && prevId !== id
+    if (switched) saveScrollPosition(prevId)
+
     const next = value || ''
-    if (next === editor.getHtml()) return
+    if (next === editor.getHtml()) {
+      if (switched) applyRestoredScroll()
+      return
+    }
+
+    if (switched) {
+      syncing = true
+      editor.setContent(next, false)
+      syncing = false
+      applyRestoredScroll()
+      return
+    }
+
     const el = getScrollEl()
     const prevTop = el?.scrollTop ?? readSavedScroll() ?? 0
     syncing = true
@@ -332,7 +356,7 @@ watch(
 
 onUnmounted(() => {
   window.removeEventListener('keydown', onKeydown)
-  window.removeEventListener('pagehide', saveScrollPosition)
+  window.removeEventListener('pagehide', onPageHide)
   getScrollEl()?.removeEventListener('scroll', onEditorScroll)
   if (scrollSaveTimer) clearTimeout(scrollSaveTimer)
   saveScrollPosition()

@@ -2,16 +2,26 @@ import fs from 'node:fs'
 import path from 'node:path'
 import JSZip from 'jszip'
 import { BACKUP_DIR, DB_PATH, getDb, nowIso, type TodoPriority, type TodoRow } from './db'
-import { getNote, saveNote } from './notes'
+import { ensureDefaultNote, listNotes, replaceNotes } from './notes'
 import { UPLOAD_DIR, ensureUploadDir, resolveUploadPath } from './uploads'
 
 /** 每天最多自动备份 1 份；保留最近 N 天 */
 const KEEP_DAYS = 14
 
+type NoteBackup = {
+  id?: number
+  title: string
+  content: string
+  disabled: boolean
+  createdAt: string
+  updatedAt: string
+}
+
 type BackupPayload = {
-  version: 1
+  version: 1 | 2
   exportedAt: string
-  note: { content: string; updatedAt: string }
+  note?: { content: string; updatedAt: string }
+  notes?: NoteBackup[]
   todos: Array<{
     content: string
     completed: boolean
@@ -77,16 +87,25 @@ export function ensureDailyBackup(force = false): { created: boolean; path: stri
 
 function buildDataPayload(): BackupPayload {
   const db = getDb()
-  const note = getNote()
+  const notes = listNotes()
+  const fallback = notes.find((row) => row.id === 1) ?? notes[0]
   const rows = db.prepare('SELECT * FROM todos ORDER BY id ASC').all() as TodoRow[]
 
   return {
-    version: 1,
+    version: 2,
     exportedAt: nowIso(),
     note: {
-      content: note.content,
-      updatedAt: note.updated_at,
+      content: fallback?.content ?? '',
+      updatedAt: fallback?.updated_at ?? nowIso(),
     },
+    notes: notes.map((row) => ({
+      id: row.id,
+      title: row.title,
+      content: row.content,
+      disabled: row.disabled === 1,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    })),
     todos: rows.map((row) => ({
       content: row.content,
       completed: row.completed === 1,
@@ -123,8 +142,24 @@ function clearUploadDir() {
 }
 
 function applyPayloadData(data: BackupPayload): number {
-  if (!data.note || typeof data.note.content !== 'string') throw new Error('缺少笔记数据')
   if (!Array.isArray(data.todos)) throw new Error('缺少任务数据')
+
+  const noteItems: NoteBackup[] =
+    Array.isArray(data.notes) && data.notes.length > 0
+      ? data.notes
+      : data.note && typeof data.note.content === 'string'
+        ? [
+            {
+              id: 1,
+              title: '默认笔记',
+              content: data.note.content,
+              disabled: false,
+              createdAt: data.note.updatedAt,
+              updatedAt: data.note.updatedAt,
+            },
+          ]
+        : []
+  if (noteItems.length === 0) throw new Error('缺少笔记数据')
 
   const db = getDb()
   const ts = nowIso()
@@ -156,9 +191,10 @@ function applyPayloadData(data: BackupPayload): number {
         item.hiddenAt ?? null,
       )
     }
-    saveNote(data.note.content)
   })
   run()
+  replaceNotes(noteItems)
+  ensureDefaultNote()
 
   return data.todos.filter((t) => t && typeof t.content === 'string' && t.content.trim()).length
 }
@@ -205,7 +241,7 @@ export async function importBackupZip(buffer: Buffer): Promise<{ todoCount: numb
     throw new Error('data.json 不是合法 JSON')
   }
 
-  if (data.version !== 1) throw new Error('不支持的备份版本')
+  if (data.version !== 1 && data.version !== 2) throw new Error('不支持的备份版本')
 
   clearUploadDir()
   const todoCount = applyPayloadData(data)

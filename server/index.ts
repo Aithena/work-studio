@@ -4,10 +4,18 @@ import path from 'node:path'
 import { serve } from '@hono/node-server'
 import { serveStatic } from '@hono/node-server/serve-static'
 import { Hono } from 'hono'
-import { getDb, type TodoRow } from './db'
+import { getDb, type NoteRow, type TodoRow } from './db'
 import { proxyChatCompletions } from './ai'
 import { listActivity, getMonthOverview, listOperationLogs } from './activity'
-import { getNote, saveNote } from './notes'
+import {
+  createNote,
+  deleteNote,
+  ensureDefaultNote,
+  getNote,
+  listNotes,
+  saveNote,
+  updateNote,
+} from './notes'
 import { ensureDailyBackup, buildExportZip, importBackupZip } from './backup'
 import {
   contentTypeFor,
@@ -58,6 +66,32 @@ function parseId(raw: string): number | null {
   const id = Number(raw)
   if (!Number.isInteger(id) || id <= 0) return null
   return id
+}
+
+function mapNote(row: NoteRow) {
+  return {
+    id: row.id,
+    title: row.title,
+    content: row.content,
+    disabled: row.disabled === 1,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }
+}
+
+function mapNoteMeta(row: NoteRow) {
+  return {
+    id: row.id,
+    title: row.title,
+    disabled: row.disabled === 1,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  }
+}
+
+function noteFail(error: unknown): { message: string; status: 400 | 404 } {
+  const message = error instanceof Error ? error.message : '操作失败'
+  return { message, status: message === '笔记不存在' ? 404 : 400 }
 }
 
 function parseFilter(raw: string | undefined): TodoFilter {
@@ -200,19 +234,83 @@ app.post('/api/todos/:id/purge', (c) => {
   return c.json(ok(mapTodo(row!)))
 })
 
+app.get('/api/notes', (c) => {
+  return c.json(ok({ items: listNotes().map(mapNoteMeta) }))
+})
+
+app.post('/api/notes', async (c) => {
+  let body: { title?: unknown }
+  try {
+    body = await c.req.json()
+  } catch {
+    return c.json(fail('请求体不是合法 JSON'), 400)
+  }
+
+  const title = typeof body.title === 'string' ? body.title : ''
+  try {
+    const note = createNote(title)
+    return c.json(ok(mapNote(note)), 201)
+  } catch (error) {
+    const result = noteFail(error)
+    return c.json(fail(result.message), result.status)
+  }
+})
+
+app.put('/api/notes/:id', async (c) => {
+  const id = parseId(c.req.param('id'))
+  if (!id) return c.json(fail('无效的笔记 ID'), 400)
+
+  let body: { title?: unknown; disabled?: unknown }
+  try {
+    body = await c.req.json()
+  } catch {
+    return c.json(fail('请求体不是合法 JSON'), 400)
+  }
+
+  const patch: { title?: string; disabled?: boolean } = {}
+  if (body.title != null) {
+    if (typeof body.title !== 'string') return c.json(fail('title 必须是字符串'), 400)
+    patch.title = body.title
+  }
+  if (body.disabled != null) {
+    if (typeof body.disabled !== 'boolean') return c.json(fail('disabled 必须是布尔值'), 400)
+    patch.disabled = body.disabled
+  }
+
+  try {
+    const note = updateNote(id, patch)
+    return c.json(ok(mapNoteMeta(note)))
+  } catch (error) {
+    const result = noteFail(error)
+    return c.json(fail(result.message), result.status)
+  }
+})
+
+app.delete('/api/notes/:id', (c) => {
+  const id = parseId(c.req.param('id'))
+  if (!id) return c.json(fail('无效的笔记 ID'), 400)
+
+  try {
+    const note = deleteNote(id)
+    return c.json(ok(mapNoteMeta(note)))
+  } catch (error) {
+    const result = noteFail(error)
+    return c.json(fail(result.message), result.status)
+  }
+})
+
 app.get('/api/note', (c) => {
-  const note = getNote()
-  return c.json(
-    ok({
-      id: note.id,
-      content: note.content,
-      updatedAt: note.updated_at,
-    }),
-  )
+  const raw = c.req.query('id')
+  const id = raw ? parseId(raw) : null
+  if (raw && !id) return c.json(fail('无效的笔记 ID'), 400)
+
+  const note = (id ? getNote(id) : getNote()) ?? (id ? undefined : ensureDefaultNote())
+  if (!note) return c.json(fail('笔记不存在'), 404)
+  return c.json(ok(mapNote(note)))
 })
 
 app.put('/api/note', async (c) => {
-  let body: { content?: unknown }
+  let body: { id?: unknown; content?: unknown }
   try {
     body = await c.req.json()
   } catch {
@@ -223,14 +321,18 @@ app.put('/api/note', async (c) => {
     return c.json(fail('content 必须是字符串'), 400)
   }
 
-  const note = saveNote(body.content)
-  return c.json(
-    ok({
-      id: note.id,
-      content: note.content,
-      updatedAt: note.updated_at,
-    }),
-  )
+  const id = body.id == null ? undefined : typeof body.id === 'number' ? body.id : Number(body.id)
+  if (body.id != null && (!Number.isInteger(id) || (id as number) <= 0)) {
+    return c.json(fail('无效的笔记 ID'), 400)
+  }
+
+  try {
+    const note = saveNote(body.content, id)
+    return c.json(ok(mapNote(note)))
+  } catch (error) {
+    const result = noteFail(error)
+    return c.json(fail(result.message), result.status)
+  }
 })
 
 app.post('/api/ai/v1/chat/completions', (c) => proxyChatCompletions(c))

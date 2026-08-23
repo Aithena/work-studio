@@ -20,10 +20,16 @@ export type TodoCounts = {
   deleted: number
 }
 
-export type Note = {
+export type NoteMeta = {
   id: number
-  content: string
+  title: string
+  disabled: boolean
+  createdAt: string
   updatedAt: string
+}
+
+export type Note = NoteMeta & {
+  content: string
 }
 
 export type ApiSuccess<T> = {

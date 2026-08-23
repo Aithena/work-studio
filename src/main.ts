@@ -8,6 +8,7 @@ import 'element-plus/es/components/message/style/css'
 import 'element-plus/es/components/message-box/style/css'
 import 'element-plus/es/components/notification/style/css'
 import 'element-plus/es/components/dialog/style/css'
+import 'element-plus/es/components/input/style/css'
 
 applyAccent(readAccent())
 

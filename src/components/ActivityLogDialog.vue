@@ -69,6 +69,11 @@ const ACTION_LABELS: Record<string, string> = {
   'todo.purge': '清除',
   'todo.priority': '优先级',
   'note.save': '保存',
+  'note.create': '新增',
+  'note.update': '编辑',
+  'note.disable': '停用',
+  'note.enable': '启用',
+  'note.delete': '删除',
   'ai.chat': 'AI 对话',
 }
 

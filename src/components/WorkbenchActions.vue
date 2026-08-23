@@ -28,22 +28,31 @@
     >
       <el-icon :size="16"><Search /></el-icon>
     </button>
-    <AccentPicker />
+    <button
+      class="icon-btn"
+      type="button"
+      title="设置"
+      aria-label="设置"
+      @click="settingsOpen = true"
+    >
+      <el-icon :size="16"><Setting /></el-icon>
+    </button>
     <QuickLinksMenu />
     <ActivityLogDialog v-model="logOpen" />
     <DataTransferDialog v-model="transferOpen" />
+    <SettingsDialog v-model="settingsOpen" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
-import { FolderOpened, Notebook, Search } from '@element-plus/icons-vue'
+import { FolderOpened, Notebook, Search, Setting } from '@element-plus/icons-vue'
 import { ElIcon } from 'element-plus'
-import AccentPicker from './AccentPicker.vue'
 import ActivityLogDialog from './ActivityLogDialog.vue'
 import DataTransferDialog from './DataTransferDialog.vue'
 import QuickLinksMenu from './QuickLinksMenu.vue'
 import SaveStatus from './SaveStatus.vue'
+import SettingsDialog from './SettingsDialog.vue'
 import type { SaveState } from '../types'
 
 defineProps<{
@@ -53,6 +62,7 @@ defineProps<{
 
 const logOpen = ref(false)
 const transferOpen = ref(false)
+const settingsOpen = ref(false)
 
 function openSearch() {
   window.dispatchEvent(new Event('workbench:search'))

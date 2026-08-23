@@ -34,6 +34,11 @@ export type OperationAction =
   | 'todo.purge'
   | 'todo.priority'
   | 'note.save'
+  | 'note.create'
+  | 'note.update'
+  | 'note.disable'
+  | 'note.enable'
+  | 'note.delete'
   | 'ai.chat'
 
 export function todayKey(date = new Date()): string {
