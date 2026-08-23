@@ -15,6 +15,9 @@
     "autostart:uninstall": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/autostart.ps1 uninstall",
     "autostart:run": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/start-workbench.ps1 -OpenBrowser",
     "app": "powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/start-workbench.ps1 -OpenBrowser",
+    "tauri": "tauri",
+    "tauri:dev": "tauri dev",
+    "tauri:build": "cmd /c scripts\\build-tauri.cmd",
     "preview": "vite preview"
   },
   "engines": {
@@ -33,6 +36,7 @@
     "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.11.4",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^24.13.3",
     "@vitejs/plugin-vue": "^6.0.8",

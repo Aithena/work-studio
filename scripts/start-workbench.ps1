@@ -3,7 +3,7 @@
 #
 # Usage:
 #   ./start-workbench.ps1              # boot / silent: no window
-#   ./start-workbench.ps1 -OpenBrowser # manual: open app window (--app)
+#   ./start-workbench.ps1 -OpenBrowser # manual: open Tauri window
 
 param(
   [switch]$OpenBrowser
@@ -22,7 +22,31 @@ function Resolve-AppBrowser {
   return $null
 }
 
+function Resolve-TauriExe {
+  $candidates = @(
+    (Join-Path $Root 'src-tauri\target\release\work-studio.exe'),
+    (Join-Path $Root 'src-tauri\target\debug\work-studio.exe')
+  )
+  foreach ($path in $candidates) {
+    if (Test-Path $path) { return $path }
+  }
+  return $null
+}
+
 function Open-AppWindow([string]$TargetUrl) {
+  $exe = Resolve-TauriExe
+  if ($exe) {
+    $running = Get-Process -Name 'work-studio' -ErrorAction SilentlyContinue
+    if ($running) {
+      Write-Log 'tauri window already running'
+      return
+    }
+    Start-Process -FilePath $exe
+    Write-Log "opened tauri window via $exe"
+    return
+  }
+
+  Write-Log 'tauri exe missing, fallback to Edge/Chrome --app (run pnpm tauri:build once)'
   $browser = Resolve-AppBrowser
   if ($browser) {
     Start-Process -FilePath $browser -ArgumentList "--app=$TargetUrl"

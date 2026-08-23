@@ -38,3 +38,9 @@
 [2026-08-23 00:59:50] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=True)
 [2026-08-23 00:59:53] port 18900 already in use, skip start
 [2026-08-23 00:59:54] opened app window via C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe
+[2026-08-23 11:58:50] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=False)
+[2026-08-23 11:58:51] server pid=8612 via node + tsx (hidden)
+[2026-08-23 11:58:54] ready at http://127.0.0.1:18900
+[2026-08-23 13:40:42] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=True)
+[2026-08-23 13:40:44] port 18900 already in use, skip start
+[2026-08-23 13:40:44] opened tauri window via D:\Apps\work-studio\src-tauri\target\release\work-studio.exe
