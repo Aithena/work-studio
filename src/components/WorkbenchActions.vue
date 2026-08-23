@@ -4,6 +4,16 @@
     <button
       class="icon-btn"
       type="button"
+      title="搜索任务 (Ctrl+K)"
+      aria-label="搜索"
+      @click="openSearch"
+    >
+      <el-icon :size="16"><Search /></el-icon>
+    </button>
+    <QuickLinksMenu />
+    <button
+      class="icon-btn"
+      type="button"
       title="操作日志"
       aria-label="操作日志"
       @click="logOpen = true"
@@ -22,22 +32,12 @@
     <button
       class="icon-btn"
       type="button"
-      title="搜索任务 (Ctrl+K)"
-      aria-label="搜索"
-      @click="openSearch"
-    >
-      <el-icon :size="16"><Search /></el-icon>
-    </button>
-    <button
-      class="icon-btn"
-      type="button"
       title="设置"
       aria-label="设置"
       @click="settingsOpen = true"
     >
       <el-icon :size="16"><Setting /></el-icon>
     </button>
-    <QuickLinksMenu />
     <ActivityLogDialog v-model="logOpen" />
     <DataTransferDialog v-model="transferOpen" />
     <SettingsDialog v-model="settingsOpen" />
