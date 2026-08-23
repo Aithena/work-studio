@@ -39,7 +39,7 @@ const links = [
   { label: '图片工具箱', url: 'https://aithena.github.io/img-tools/#/ico' },
   { label: '文本工具箱', url: 'https://aithena.github.io/str-tools/' },
   { label: '订单LBS', url: 'https://aithena.github.io/kys-order-lbs/' },
-  { label: '接口文档', url: 'http://127.0.0.1:18816/' },
+  { label: '接口文档', url: 'http://127.0.0.1:18902/' },
 ]
 
 function onDocClick(event: MouseEvent) {

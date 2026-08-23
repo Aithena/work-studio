@@ -11,6 +11,7 @@
     "windows": [
       {
         "label": "main",
+        "create": false,
         "title": "我的工作台",
         "width": 1280,
         "height": 800,
