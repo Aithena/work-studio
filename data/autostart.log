@@ -106,3 +106,6 @@
 [2026-08-23 22:11:35] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=True)
 [2026-08-23 22:11:37] port 18900 already in use, skip start
 [2026-08-23 22:11:38] opened tauri window via D:\Apps\work-studio\src-tauri\target\release\work-studio.exe
+[2026-08-23 22:17:34] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=True)
+[2026-08-23 22:17:35] port 18900 already in use, skip start
+[2026-08-23 22:17:35] opened tauri window via D:\Apps\work-studio\src-tauri\target\release\work-studio.exe
