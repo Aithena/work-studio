@@ -14,7 +14,7 @@ import { sortActiveTodos } from '../utils/todoPriority'
 
 const todos = ref<Todo[]>([])
 const counts = ref<TodoCounts>({ active: 0, completed: 0, deleted: 0 })
-const filter = ref<TodoFilter>('all')
+const filter = ref<TodoFilter>('active')
 const loading = ref(false)
 const searchQuery = ref('')
 
@@ -100,7 +100,7 @@ export function useTodos() {
     try {
       const created = await apiCreate(text)
       if (filter.value === 'completed' || filter.value === 'deleted') {
-        filter.value = 'all'
+        filter.value = 'active'
         await load()
         return
       }
@@ -115,7 +115,7 @@ export function useTodos() {
   async function importText(text: string) {
     const created = await apiImport(text)
     if (filter.value === 'completed' || filter.value === 'deleted') {
-      filter.value = 'all'
+      filter.value = 'active'
     }
     await load()
     notifyActivity()
