@@ -1,0 +1,16 @@
+---
+description: 先读 AGENTS.md，按功能打开对应文件，不要全库扫描
+alwaysApply: true
+---
+
+# 新会话入口
+
+这是本地工作台（左 Todo，右 AiEditor 笔记）。单页、无路由、无 Pinia。
+
+1. 先读根目录 `AGENTS.md`（项目地图）。
+2. 按其中表格打开对应文件，不要 glob 整个仓库。
+3. 产品规格在 `.codex/技术实现规范.md`，不是代码入口。
+
+速查：布局 `src/views/WorkspaceView.vue`；Todo `src/composables/useTodos.ts` + `server/todos.ts`；笔记 `src/composables/useNote.ts` + `src/components/NoteEditor.vue` + `server/notes.ts`；HTTP 路由 `server/index.ts`；SQLite `server/db.ts`；AI 代理 `server/ai.ts`；Tauri 套壳 `src-tauri/src/lib.rs`。
+
+端口：web `18900`，API `8787`。数据在 `data/note.db`。
