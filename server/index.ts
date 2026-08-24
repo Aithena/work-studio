@@ -6,6 +6,7 @@ import { serveStatic } from '@hono/node-server/serve-static'
 import { Hono } from 'hono'
 import { getDb, type NoteRow, type TodoRow } from './db'
 import { proxyChatCompletions } from './ai'
+import { getAiCall, listAiCalls } from './ai-logs'
 import { listActivity, getMonthOverview, listOperationLogs } from './activity'
 import {
   createNote,
@@ -352,6 +353,20 @@ app.get('/api/activity/logs', (c) => {
   const raw = Number(c.req.query('limit') || 100)
   const limit = Number.isFinite(raw) ? raw : 100
   return c.json(ok({ items: listOperationLogs(limit) }))
+})
+
+app.get('/api/ai/calls', (c) => {
+  const raw = Number(c.req.query('limit') || 100)
+  const limit = Number.isFinite(raw) ? raw : 100
+  return c.json(ok({ items: listAiCalls(limit) }))
+})
+
+app.get('/api/ai/calls/:id', (c) => {
+  const id = Number(c.req.param('id'))
+  if (!Number.isInteger(id) || id <= 0) return c.json(fail('无效的调用记录 ID'), 400)
+  const item = getAiCall(id)
+  if (!item) return c.json(fail('记录不存在'), 404)
+  return c.json(ok(item))
 })
 
 app.get('/api/backup/export', async (c) => {

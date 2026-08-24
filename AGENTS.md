@@ -22,7 +22,7 @@
 | 优先级排序 | `src/utils/todoPriority.ts` |
 | 右栏笔记 UI | `src/components/NoteEditor.vue`（AiEditor） |
 | 笔记切换 / 自动保存 | `src/composables/useNote.ts` → `src/api/note.ts` → `server/notes.ts` |
-| 顶栏按钮（搜索/日志/导入导出/设置/快捷链接） | `src/components/WorkbenchActions.vue` |
+| 顶栏按钮（搜索/日志/AI 记录/导入导出/设置/快捷链接） | `src/components/WorkbenchActions.vue` |
 | 活动热力图 | `src/components/ActivityHeatmap.vue` → `src/api/activity.ts` → `server/activity.ts` |
 | 设置 / 强调色 | `src/components/SettingsDialog.vue`、`src/composables/useAccent.ts` |
 | 导入导出 zip | `src/components/DataTransferDialog.vue` → `src/api/backup.ts` → `server/backup.ts` |
@@ -32,6 +32,7 @@
 | HTTP 入口 / 路由表 | `server/index.ts` |
 | SQLite schema / 迁移补列 | `server/db.ts` |
 | AI 代理（编辑器对话） | `server/ai.ts`（`AI_API_KEY` / `AI_BASE_URL` / `AI_MODEL`） |
+| AI 调用记录 | `src/components/AiCallLogDialog.vue` → `src/api/ai.ts` → `server/ai-logs.ts`；表 `ai_calls` |
 | 图片上传 | `server/uploads.ts`（返回 AiEditor 的 `errorCode` 结构，不走 `{ success }`） |
 | Tauri 窗口 / 外链 Chrome | `src-tauri/src/lib.rs`、`src-tauri/tauri.conf.json` |
 | 开机/桌面快捷方式 | `scripts/start-workbench.ps1`、`autostart.ps1`、`desktop-shortcut.ps1` |

@@ -22,6 +22,15 @@
     <button
       class="icon-btn"
       type="button"
+      title="AI 调用记录"
+      aria-label="AI 调用记录"
+      @click="aiOpen = true"
+    >
+      <el-icon :size="16"><MagicStick /></el-icon>
+    </button>
+    <button
+      class="icon-btn"
+      type="button"
       title="导入 / 导出"
       aria-label="导入 / 导出"
       @click="transferOpen = true"
@@ -39,6 +48,7 @@
       <el-icon :size="16"><Setting /></el-icon>
     </button>
     <ActivityLogDialog v-model="logOpen" />
+    <AiCallLogDialog v-model="aiOpen" />
     <DataTransferDialog v-model="transferOpen" />
     <SettingsDialog v-model="settingsOpen" />
   </div>
@@ -46,9 +56,10 @@
 
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
-import { FolderOpened, Notebook, Search, Setting } from '@element-plus/icons-vue'
+import { FolderOpened, MagicStick, Notebook, Search, Setting } from '@element-plus/icons-vue'
 import { ElIcon } from 'element-plus'
 import ActivityLogDialog from './ActivityLogDialog.vue'
+import AiCallLogDialog from './AiCallLogDialog.vue'
 import DataTransferDialog from './DataTransferDialog.vue'
 import QuickLinksMenu from './QuickLinksMenu.vue'
 import SaveStatus from './SaveStatus.vue'
@@ -61,6 +72,7 @@ defineProps<{
 }>()
 
 const logOpen = ref(false)
+const aiOpen = ref(false)
 const transferOpen = ref(false)
 const settingsOpen = ref(false)
 

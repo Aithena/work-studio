@@ -93,6 +93,28 @@ export function getDb(): Database.Database {
     );
 
     CREATE INDEX IF NOT EXISTS idx_operation_logs_day ON operation_logs(day);
+
+    CREATE TABLE IF NOT EXISTS ai_calls (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      created_at TEXT NOT NULL,
+      finished_at TEXT,
+      duration_ms INTEGER,
+      status TEXT NOT NULL,
+      http_status INTEGER,
+      model TEXT,
+      prompt_tokens INTEGER,
+      completion_tokens INTEGER,
+      total_tokens INTEGER,
+      finish_reason TEXT,
+      error_message TEXT,
+      request_json TEXT NOT NULL DEFAULT '',
+      response_json TEXT,
+      raw_sse TEXT
+    );
+
+    CREATE INDEX IF NOT EXISTS idx_ai_calls_created_at ON ai_calls(created_at);
+    CREATE INDEX IF NOT EXISTS idx_ai_calls_model ON ai_calls(model);
+    CREATE INDEX IF NOT EXISTS idx_ai_calls_status ON ai_calls(status);
   `)
 
   // 兼容旧库：补列

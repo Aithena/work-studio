@@ -15,7 +15,7 @@
       @blur="commit"
     />
     <div v-else class="main">
-      <span class="text" @dblclick="$emit('edit')">{{ todo.content }}</span>
+      <span class="text" :title="todo.content" @dblclick="$emit('edit')">{{ todo.content }}</span>
       <span
         v-if="todo.priority && !todo.completed"
         class="priority"
