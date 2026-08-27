@@ -15,7 +15,7 @@
         "title": "我的工作台",
         "width": 940,
         "height": 600,
-        "minWidth": 760,
+        "minWidth": 940,
         "minHeight": 500,
         "resizable": true,
         "fullscreen": false,

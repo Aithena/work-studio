@@ -1,0 +1,69 @@
+.wb-dialog {
+  border-radius: 16px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12) !important;
+  padding: 8px 4px 12px !important;
+}
+.wb-dialog .el-dialog__header {
+  padding: 20px 24px 8px;
+  margin-right: 0;
+}
+.wb-dialog .el-dialog__title {
+  display: block;
+  width: 100%;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+.wb-dialog.activity-dialog .el-dialog__title,
+.wb-dialog.import-dialog .el-dialog__title,
+.wb-dialog.transfer-dialog .el-dialog__title,
+.wb-dialog.settings-dialog .el-dialog__title {
+  text-align: left;
+}
+.wb-dialog.activity-dialog .el-dialog__header,
+.wb-dialog.import-dialog .el-dialog__header,
+.wb-dialog.transfer-dialog .el-dialog__header,
+.wb-dialog.settings-dialog .el-dialog__header {
+  text-align: left;
+}
+.wb-dialog.wb-dialog {
+  max-width: calc(100vw - 48px);
+  min-width: 400px;
+}
+.wb-dialog .el-dialog__headerbtn {
+  top: 16px;
+  right: 16px;
+}
+.wb-dialog .el-dialog__body {
+  padding: 8px 28px 12px;
+}
+.wb-dialog.activity-dialog .el-dialog__body,
+.wb-dialog.settings-dialog .el-dialog__body {
+  overflow: hidden;
+}
+.wb-dialog .el-dialog__footer {
+  padding: 8px 28px 16px;
+}
+.el-overlay .wb-dialog {
+  background: #fff;
+}
+.el-overlay {
+  background: rgba(0, 0, 0, 0.18) !important;
+  backdrop-filter: blur(8px);
+}
+.wb-message-box {
+  border-radius: 16px !important;
+  padding: 8px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12) !important;
+}
+.wb-message-box .el-message-box__title {
+  font-weight: 600;
+}
+.wb-message-box .el-message-box__btns .el-button {
+  border-radius: 10px;
+}
+.el-message {
+  border-radius: 10px !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06) !important;
+}

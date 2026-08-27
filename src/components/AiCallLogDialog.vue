@@ -2,7 +2,7 @@
   <el-dialog
     :model-value="modelValue"
     class="wb-dialog ai-call-dialog"
-    width="1080px"
+    width="840px"
     align-center
     append-to-body
     destroy-on-close

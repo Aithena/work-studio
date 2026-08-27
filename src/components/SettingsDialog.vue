@@ -2,7 +2,7 @@
   <el-dialog
     :model-value="modelValue"
     class="wb-dialog settings-dialog"
-    width="1200px"
+    width="840px"
     align-center
     append-to-body
     destroy-on-close
@@ -358,7 +358,7 @@ async function onDelete(note: NoteMeta) {
 .table-head,
 .row {
   display: grid;
-  grid-template-columns: 20px minmax(0, 1.4fr) 88px 140px 180px;
+  grid-template-columns: 20px minmax(0, 1.4fr) 60px 90px 140px;
   gap: 12px;
   align-items: center;
   padding: 0 16px;

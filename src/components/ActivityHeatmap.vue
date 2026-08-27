@@ -1,7 +1,7 @@
 <template>
   <div class="activity" :class="{ embedded }">
     <div class="board">
-      <aside class="overview">
+      <!-- <aside class="overview">
         <div class="overview-title">本月概览</div>
         <div class="metrics">
           <div class="metric">
@@ -20,7 +20,7 @@
             <div class="label">总字数</div>
           </div>
         </div>
-      </aside>
+      </aside> -->
 
       <div class="heatmap">
         <div class="months" :style="{ gridTemplateColumns: monthGrid }">
@@ -207,7 +207,7 @@ defineExpose({ reload: load })
 .board {
   position: relative;
   display: flex;
-  padding-left: 168px;
+  padding-left: 0px;
   min-width: max-content;
   box-sizing: border-box;
 }
