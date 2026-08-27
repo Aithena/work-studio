@@ -13,6 +13,7 @@ type NoteBackup = {
   title: string
   content: string
   disabled: boolean
+  sortOrder?: number
   createdAt: string
   updatedAt: string
 }
@@ -103,6 +104,7 @@ function buildDataPayload(): BackupPayload {
       title: row.title,
       content: row.content,
       disabled: row.disabled === 1,
+      sortOrder: row.sort_order,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     })),

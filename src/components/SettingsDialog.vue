@@ -40,45 +40,67 @@
           <div class="notes-head">
             <div>
               <div class="section-title">笔记管理</div>
-              <p class="section-desc">新增后可在首页右侧切换；停用的笔记不会出现在切换列表中。</p>
+              <p class="section-desc">
+                拖拽可调整顺序，会同步到首页切换笔记列表；停用的笔记不会出现在切换列表中。
+              </p>
             </div>
             <button class="btn primary" type="button" @click="onCreate">新增笔记</button>
           </div>
 
           <div class="table">
             <div class="table-head">
+              <span class="col handle" />
               <span class="col name">名称</span>
               <span class="col status">状态</span>
               <span class="col time">更新时间</span>
               <span class="col actions">操作</span>
             </div>
             <div v-if="notes.length === 0" class="empty">还没有笔记</div>
-            <div v-for="note in notes" :key="note.id" class="row">
-              <span class="col name">
-                <span class="note-title">{{ note.title }}</span>
-                <span v-if="note.id === currentId" class="current">当前</span>
-              </span>
-              <span class="col status">
-                <span class="badge" :class="{ off: note.disabled }">
-                  {{ note.disabled ? '已停用' : '使用中' }}
-                </span>
-              </span>
-              <span class="col time">{{ formatTime(note.updatedAt) }}</span>
-              <span class="col actions">
-                <button type="button" @click="onRename(note)">编辑</button>
-                <button type="button" :disabled="disableLast(note)" @click="onToggle(note)">
-                  {{ note.disabled ? '启用' : '停用' }}
-                </button>
-                <button
-                  class="danger"
-                  type="button"
-                  :disabled="disableLast(note)"
-                  @click="onDelete(note)"
-                >
-                  删除
-                </button>
-              </span>
-            </div>
+            <draggable
+              v-else
+              :model-value="notes"
+              item-key="id"
+              handle=".drag-handle"
+              :animation="180"
+              :force-fallback="true"
+              :fallback-on-body="true"
+              ghost-class="settings-note-ghost"
+              @update:model-value="onReorder"
+            >
+              <template #item="{ element: note }">
+                <div class="row">
+                  <span class="col handle">
+                    <span class="drag-handle" title="拖拽排序">
+                      <i /><i /><i /><i /><i /><i />
+                    </span>
+                  </span>
+                  <span class="col name">
+                    <span class="note-title">{{ note.title }}</span>
+                    <span v-if="note.id === currentId" class="current">当前</span>
+                  </span>
+                  <span class="col status">
+                    <span class="badge" :class="{ off: note.disabled }">
+                      {{ note.disabled ? '已停用' : '使用中' }}
+                    </span>
+                  </span>
+                  <span class="col time">{{ formatTime(note.updatedAt) }}</span>
+                  <span class="col actions">
+                    <button type="button" @click="onRename(note)">编辑</button>
+                    <button type="button" :disabled="disableLast(note)" @click="onToggle(note)">
+                      {{ note.disabled ? '启用' : '停用' }}
+                    </button>
+                    <button
+                      class="danger"
+                      type="button"
+                      :disabled="disableLast(note)"
+                      @click="onDelete(note)"
+                    >
+                      删除
+                    </button>
+                  </span>
+                </div>
+              </template>
+            </draggable>
           </div>
         </section>
       </div>
@@ -89,6 +111,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { ElDialog, ElMessage, ElMessageBox } from 'element-plus'
+import draggable from 'vuedraggable'
 import AccentPicker from './AccentPicker.vue'
 import { useNote } from '../composables/useNote'
 import type { NoteMeta } from '../types'
@@ -107,8 +130,17 @@ const tabs = [
 ]
 
 const tab = ref<(typeof tabs)[number]['id']>('appearance')
-const { notes, currentId, enabledCount, refreshList, addNote, renameNote, setNoteDisabled, removeNote } =
-  useNote()
+const {
+  notes,
+  currentId,
+  enabledCount,
+  refreshList,
+  addNote,
+  renameNote,
+  setNoteDisabled,
+  removeNote,
+  reorderNotes,
+} = useNote()
 
 watch(
   () => props.modelValue,
@@ -139,6 +171,14 @@ function formatTime(value: string) {
 
 function disableLast(note: NoteMeta) {
   return !note.disabled && enabledCount.value <= 1
+}
+
+async function onReorder(next: NoteMeta[]) {
+  try {
+    await reorderNotes(next.map((item) => item.id))
+  } catch (error) {
+    ElMessage.error(error instanceof Error ? error.message : '排序失败')
+  }
 }
 
 async function promptTitle(title: string, value: string) {
@@ -318,7 +358,7 @@ async function onDelete(note: NoteMeta) {
 .table-head,
 .row {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) 88px 140px 180px;
+  grid-template-columns: 20px minmax(0, 1.4fr) 88px 140px 180px;
   gap: 12px;
   align-items: center;
   padding: 0 16px;
@@ -332,8 +372,40 @@ async function onDelete(note: NoteMeta) {
 }
 
 .row {
+  background: #fff;
   border-top: 1px solid var(--color-border-light);
   font-size: 13px;
+}
+
+.col.handle {
+  display: flex;
+  justify-content: center;
+}
+
+.drag-handle {
+  width: 12px;
+  height: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  cursor: grab;
+  flex-shrink: 0;
+  place-content: center;
+
+  i {
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: #c8c8c4;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+.row:hover .drag-handle i {
+  background: #9a9a96;
 }
 
 .empty {
@@ -406,5 +478,12 @@ async function onDelete(note: NoteMeta) {
       opacity: 0.35;
     }
   }
+}
+</style>
+
+<style lang="less">
+.settings-note-ghost {
+  opacity: 0.55;
+  background: rgba(0, 0, 0, 0.03);
 }
 </style>

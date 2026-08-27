@@ -121,3 +121,60 @@
 [2026-08-24 09:06:36] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=True)
 [2026-08-24 09:06:37] port 18900 already in use, skip start
 [2026-08-24 09:06:37] opened tauri window via D:\Apps\work-studio\src-tauri\target\release\work-studio.exe
+[2026-08-24 19:56:02] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=True)
+[2026-08-24 19:56:03] port 18900 already in use, skip start
+[2026-08-24 19:56:03] opened tauri window via D:\Apps\work-studio\src-tauri\target\release\work-studio.exe
+[2026-08-25 08:53:10] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=False)
+[2026-08-25 08:53:11] server pid=19172 via node + tsx (hidden)
+[2026-08-25 08:53:12] ready at http://127.0.0.1:18900
+[2026-08-25 08:56:11] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=True)
+[2026-08-25 08:56:13] port 18900 already in use, skip start
+[2026-08-25 08:56:13] opened tauri window via D:\Apps\work-studio\src-tauri\target\release\work-studio.exe
+[2026-08-25 18:46:50] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=False)
+[2026-08-25 18:46:52] server pid=27308 via node + tsx (hidden)
+[2026-08-25 18:46:55] ready at http://127.0.0.1:18900
+[2026-08-25 18:56:37] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=True)
+[2026-08-25 18:56:37] port 18900 already in use, skip start
+[2026-08-25 18:56:38] opened tauri window via D:\Apps\work-studio\src-tauri\target\release\work-studio.exe
+[2026-08-25 19:03:11] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=True)
+[2026-08-25 19:03:12] port 18900 already in use, skip start
+[2026-08-25 19:03:12] opened tauri window via D:\Apps\work-studio\src-tauri\target\release\work-studio.exe
+[2026-08-25 21:36:34] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=True)
+[2026-08-25 21:36:38] port 18900 already in use, skip start
+[2026-08-25 21:36:38] opened tauri window via D:\Apps\work-studio\src-tauri\target\release\work-studio.exe
+[2026-08-26 08:57:56] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=False)
+[2026-08-26 08:57:58] server pid=33572 via node + tsx (hidden)
+[2026-08-26 08:58:01] ready at http://127.0.0.1:18900
+[2026-08-26 09:22:52] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=False)
+[2026-08-26 09:22:59] server pid=26284 via node + tsx (hidden)
+[2026-08-26 09:23:09] ready at http://127.0.0.1:18900
+[2026-08-26 18:29:52] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=False)
+[2026-08-26 18:29:54] server pid=26240 via node + tsx (hidden)
+[2026-08-26 18:30:01] ready at http://127.0.0.1:18900
+[2026-08-26 20:16:09] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=False)
+[2026-08-26 20:16:11] server pid=2232 via node + tsx (hidden)
+[2026-08-26 20:16:14] ready at http://127.0.0.1:18900
+[2026-08-26 22:03:09] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=False)
+[2026-08-26 22:03:12] server pid=2012 via node + tsx (hidden)
+[2026-08-26 22:03:16] ready at http://127.0.0.1:18900
+[2026-08-26 22:57:12] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=False)
+[2026-08-26 22:57:16] server pid=11056 via node + tsx (hidden)
+[2026-08-26 22:57:24] ready at http://127.0.0.1:18900
+[2026-08-27 08:57:44] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=False)
+[2026-08-27 08:57:46] server pid=19260 via node + tsx (hidden)
+[2026-08-27 08:57:49] ready at http://127.0.0.1:18900
+[2026-08-27 15:25:39] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=True)
+[2026-08-27 15:25:41] port 18900 already in use, skip start
+[2026-08-27 15:25:42] tauri window already running, focused
+[2026-08-27 15:27:11] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=True)
+[2026-08-27 15:27:12] port 18900 already in use, skip start
+[2026-08-27 15:27:12] tauri window already running, focused
+[2026-08-27 19:58:19] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=False)
+[2026-08-27 19:58:20] server pid=8660 via node + tsx (hidden)
+[2026-08-27 19:58:23] ready at http://127.0.0.1:18900
+[2026-08-27 20:57:42] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=True)
+[2026-08-27 20:57:43] port 18900 already in use, skip start
+[2026-08-27 20:57:44] opened tauri window via D:\Apps\work-studio\src-tauri\target\release\work-studio.exe
+[2026-08-27 21:03:06] starting work-studio at http://127.0.0.1:18900 (OpenBrowser=True)
+[2026-08-27 21:03:07] port 18900 already in use, skip start
+[2026-08-27 21:03:07] opened tauri window via D:\Apps\work-studio\src-tauri\target\release\work-studio.exe

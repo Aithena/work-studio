@@ -3,7 +3,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { serve } from '@hono/node-server'
 import { serveStatic } from '@hono/node-server/serve-static'
-import { Hono } from 'hono'
+import { Hono, type Context } from 'hono'
 import { getDb, type NoteRow, type TodoRow } from './db'
 import { proxyChatCompletions } from './ai'
 import { getAiCall, listAiCalls } from './ai-logs'
@@ -14,6 +14,7 @@ import {
   ensureDefaultNote,
   getNote,
   listNotes,
+  reorderNotes,
   saveNote,
   updateNote,
 } from './notes'
@@ -69,12 +70,35 @@ function parseId(raw: string): number | null {
   return id
 }
 
+function parseIdList(raw: unknown): number[] | null {
+  if (!Array.isArray(raw)) return null
+  const ids = raw.map((value) => (typeof value === 'number' ? value : Number(value)))
+  if (ids.some((id) => !Number.isInteger(id) || id <= 0)) return null
+  return ids
+}
+
+async function handleNoteReorder(c: Context) {
+  let body: { ids?: unknown }
+  try {
+    body = (await c.req.json()) as { ids?: unknown }
+  } catch {
+    return c.json(fail('请求体不是合法 JSON'), 400)
+  }
+
+  const ids = parseIdList(body.ids)
+  if (!ids) return c.json(fail('ids 必须是整数数组'), 400)
+
+  reorderNotes(ids)
+  return c.json(ok({ ok: true }))
+}
+
 function mapNote(row: NoteRow) {
   return {
     id: row.id,
     title: row.title,
     content: row.content,
     disabled: row.disabled === 1,
+    sortOrder: row.sort_order,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   }
@@ -85,6 +109,7 @@ function mapNoteMeta(row: NoteRow) {
     id: row.id,
     title: row.title,
     disabled: row.disabled === 1,
+    sortOrder: row.sort_order,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   }
@@ -257,7 +282,13 @@ app.post('/api/notes', async (c) => {
   }
 })
 
+app.put('/api/notes/reorder', (c) => handleNoteReorder(c))
+
 app.put('/api/notes/:id', async (c) => {
+  if (c.req.param('id') === 'reorder') {
+    return handleNoteReorder(c)
+  }
+
   const id = parseId(c.req.param('id'))
   if (!id) return c.json(fail('无效的笔记 ID'), 400)
 

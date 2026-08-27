@@ -24,6 +24,7 @@ export type NoteMeta = {
   id: number
   title: string
   disabled: boolean
+  sortOrder: number
   createdAt: string
   updatedAt: string
 }

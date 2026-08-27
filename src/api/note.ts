@@ -22,6 +22,10 @@ export function updateNote(id: number, patch: { title?: string; disabled?: boole
   return apiSend<NoteMeta>(`/api/notes/${id}`, 'PUT', patch)
 }
 
+export function reorderNotes(ids: number[]) {
+  return apiSend<{ ok: true }>('/api/notes/reorder', 'PUT', { ids })
+}
+
 export function deleteNote(id: number) {
   return apiSend<NoteMeta>(`/api/notes/${id}`, 'DELETE')
 }

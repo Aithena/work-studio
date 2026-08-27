@@ -53,9 +53,9 @@ const items: { value: TodoFilter; label: string; icon: string }[] = [
 .filter-bar {
   display: flex;
   align-items: center;
-  gap: 4px;
-  height: 52px;
-  padding: 0 16px;
+  gap: 0px;
+  height: 40px;
+  padding: 0 10px;
   border-top: 0;
   background: #efefef;
   flex-shrink: 0;
@@ -63,14 +63,15 @@ const items: { value: TodoFilter; label: string; icon: string }[] = [
 
 .filter-btn {
   flex: 1;
-  height: 34px;
-  display: inline-flex;
+  height: 40px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
   color: var(--color-text-secondary);
-  font-size: 12px;
-  border-radius: 8px;
+  font-size: 10px;
+  border-radius: 2px;
   transition:
     color 160ms ease,
     background 160ms ease;

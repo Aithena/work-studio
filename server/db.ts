@@ -30,6 +30,7 @@ export type NoteRow = {
   title: string
   content: string
   disabled: number
+  sort_order: number
   created_at: string
   updated_at: string
 }
@@ -71,6 +72,7 @@ export function getDb(): Database.Database {
       title TEXT NOT NULL DEFAULT '默认笔记',
       content TEXT NOT NULL DEFAULT '',
       disabled INTEGER NOT NULL DEFAULT 0,
+      sort_order INTEGER NOT NULL DEFAULT 0,
       created_at TEXT NOT NULL,
       updated_at TEXT NOT NULL
     );
@@ -147,6 +149,10 @@ export function getDb(): Database.Database {
   if (noteCols.length > 0 && !noteCols.some((col) => col.name === 'disabled')) {
     db.exec(`ALTER TABLE notes ADD COLUMN disabled INTEGER NOT NULL DEFAULT 0`)
   }
+  if (noteCols.length > 0 && !noteCols.some((col) => col.name === 'sort_order')) {
+    db.exec(`ALTER TABLE notes ADD COLUMN sort_order INTEGER NOT NULL DEFAULT 0`)
+    db.exec(`UPDATE notes SET sort_order = id`)
+  }
   if (noteCols.length > 0 && !noteCols.some((col) => col.name === 'created_at')) {
     db.exec(`ALTER TABLE notes ADD COLUMN created_at TEXT`)
   }
@@ -159,7 +165,7 @@ export function getDb(): Database.Database {
   const note = db.prepare('SELECT id FROM notes WHERE id = 1').get()
   if (!note) {
     db.prepare(
-      'INSERT INTO notes (id, title, content, disabled, created_at, updated_at) VALUES (1, ?, ?, 0, ?, ?)',
+      'INSERT INTO notes (id, title, content, disabled, sort_order, created_at, updated_at) VALUES (1, ?, ?, 0, 0, ?, ?)',
     ).run('默认笔记', '', ts, ts)
   }
 

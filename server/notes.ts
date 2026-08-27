@@ -18,7 +18,7 @@ function normalizeTitle(title: string): string {
 }
 
 export function listNotes(): NoteRow[] {
-  return getDb().prepare('SELECT * FROM notes ORDER BY id ASC').all() as NoteRow[]
+  return getDb().prepare('SELECT * FROM notes ORDER BY sort_order ASC, id ASC').all() as NoteRow[]
 }
 
 export function getNote(id?: number | null): NoteRow | undefined {
@@ -28,7 +28,7 @@ export function getNote(id?: number | null): NoteRow | undefined {
   const preferred = getDb().prepare('SELECT * FROM notes WHERE id = 1').get() as NoteRow | undefined
   if (preferred) return preferred
   return getDb()
-    .prepare('SELECT * FROM notes WHERE disabled = 0 ORDER BY id ASC LIMIT 1')
+    .prepare('SELECT * FROM notes WHERE disabled = 0 ORDER BY sort_order ASC, id ASC LIMIT 1')
     .get() as NoteRow | undefined
 }
 
@@ -38,10 +38,18 @@ export function ensureDefaultNote(): NoteRow {
   const ts = nowIso()
   getDb()
     .prepare(
-      'INSERT INTO notes (id, title, content, disabled, created_at, updated_at) VALUES (1, ?, ?, 0, ?, ?)',
+      'INSERT INTO notes (id, title, content, disabled, sort_order, created_at, updated_at) VALUES (1, ?, ?, 0, 0, ?, ?)',
     )
     .run(DEFAULT_TITLE, '', ts, ts)
-  return { id: 1, title: DEFAULT_TITLE, content: '', disabled: 0, created_at: ts, updated_at: ts }
+  return {
+    id: 1,
+    title: DEFAULT_TITLE,
+    content: '',
+    disabled: 0,
+    sort_order: 0,
+    created_at: ts,
+    updated_at: ts,
+  }
 }
 
 function countEnabled(exceptId?: number): number {
@@ -55,14 +63,20 @@ function countEnabled(exceptId?: number): number {
   return row.n
 }
 
+function nextSortOrder(): number {
+  const row = getDb().prepare('SELECT MAX(sort_order) AS n FROM notes').get() as { n: number | null }
+  return (row.n ?? -1) + 1
+}
+
 export function createNote(title: string): NoteRow {
   const nextTitle = normalizeTitle(title) || '未命名笔记'
   const ts = nowIso()
+  const sortOrder = nextSortOrder()
   const result = getDb()
     .prepare(
-      'INSERT INTO notes (title, content, disabled, created_at, updated_at) VALUES (?, ?, 0, ?, ?)',
+      'INSERT INTO notes (title, content, disabled, sort_order, created_at, updated_at) VALUES (?, ?, 0, ?, ?, ?)',
     )
-    .run(nextTitle, '', ts, ts)
+    .run(nextTitle, '', sortOrder, ts, ts)
   const id = Number(result.lastInsertRowid)
   recordOperation({
     action: 'note.create',
@@ -138,6 +152,17 @@ export function deleteNote(id: number): NoteRow {
   return current
 }
 
+export function reorderNotes(ids: number[]): void {
+  const db = getDb()
+  const stmt = db.prepare('UPDATE notes SET sort_order = ? WHERE id = ?')
+  const run = db.transaction((orderedIds: number[]) => {
+    orderedIds.forEach((noteId, index) => {
+      stmt.run(index, noteId)
+    })
+  })
+  run(ids)
+}
+
 export function saveNote(content: string, id?: number | null): NoteRow {
   const current = id != null ? getNote(id) : ensureDefaultNote()
   if (!current) throw new Error('笔记不存在')
@@ -170,6 +195,7 @@ export function replaceNotes(
     title: string
     content: string
     disabled?: boolean
+    sortOrder?: number
     createdAt?: string
     updatedAt?: string
   }>,
@@ -177,26 +203,27 @@ export function replaceNotes(
   const ts = nowIso()
   const db = getDb()
   const insert = db.prepare(
-    'INSERT INTO notes (id, title, content, disabled, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)',
+    'INSERT INTO notes (id, title, content, disabled, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
   )
   const insertAuto = db.prepare(
-    'INSERT INTO notes (title, content, disabled, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
+    'INSERT INTO notes (title, content, disabled, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)',
   )
 
   const run = db.transaction(() => {
     db.prepare('DELETE FROM notes').run()
-    for (const item of notes) {
+    notes.forEach((item, index) => {
       const title = normalizeTitle(item.title) || DEFAULT_TITLE
       const content = typeof item.content === 'string' ? item.content : ''
       const disabled = item.disabled ? 1 : 0
+      const sortOrder = Number.isFinite(item.sortOrder) ? (item.sortOrder as number) : index
       const createdAt = typeof item.createdAt === 'string' && item.createdAt ? item.createdAt : ts
       const updatedAt = typeof item.updatedAt === 'string' && item.updatedAt ? item.updatedAt : ts
       if (Number.isInteger(item.id) && (item.id as number) > 0) {
-        insert.run(item.id, title, content, disabled, createdAt, updatedAt)
+        insert.run(item.id, title, content, disabled, sortOrder, createdAt, updatedAt)
       } else {
-        insertAuto.run(title, content, disabled, createdAt, updatedAt)
+        insertAuto.run(title, content, disabled, sortOrder, createdAt, updatedAt)
       }
-    }
+    })
   })
   run()
 

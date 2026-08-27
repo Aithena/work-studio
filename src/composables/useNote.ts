@@ -6,6 +6,7 @@ import {
   fetchNotes,
   saveNote as apiSaveNote,
   updateNote as apiUpdateNote,
+  reorderNotes as apiReorderNotes,
 } from '../api/note'
 import type { NoteMeta, SaveState } from '../types'
 
@@ -64,10 +65,12 @@ function markEditing() {
 }
 
 function toMeta(item: NoteMeta): NoteMeta {
+  const existing = notes.value.find((n) => n.id === item.id)
   return {
     id: item.id,
     title: item.title,
     disabled: item.disabled,
+    sortOrder: item.sortOrder ?? existing?.sortOrder ?? 0,
     createdAt: item.createdAt,
     updatedAt: item.updatedAt,
   }
@@ -178,6 +181,27 @@ async function removeNote(id: number) {
   }
 }
 
+async function reorderNotes(ids: number[]) {
+  const previous = notes.value.slice()
+  const byId = new Map(previous.map((item) => [item.id, item]))
+  const next = ids
+    .map((id, index) => {
+      const item = byId.get(id)
+      return item ? { ...item, sortOrder: index } : null
+    })
+    .filter((item): item is NoteMeta => item != null)
+  if (next.length !== previous.length) {
+    throw new Error('排序数据不完整')
+  }
+  notes.value = next
+  try {
+    await apiReorderNotes(ids)
+  } catch (error) {
+    notes.value = previous
+    throw error
+  }
+}
+
 export function useNote() {
   const currentNote = computed(() => notes.value.find((item) => item.id === currentId.value) ?? null)
   const activeNotes = computed(() => notes.value.filter((item) => !item.disabled))
@@ -204,5 +228,6 @@ export function useNote() {
     renameNote,
     setNoteDisabled,
     removeNote,
+    reorderNotes,
   }
 }
