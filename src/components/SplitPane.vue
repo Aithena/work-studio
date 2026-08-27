@@ -90,9 +90,13 @@ onUnmounted(() => {
   height: 100%;
 }
 
+.pane-left {
+  max-width: 260px;
+}
+
 .pane-right {
   flex: 1;
-  min-width: 1000px;
+  min-width: 500px;
 }
 
 .gutter {

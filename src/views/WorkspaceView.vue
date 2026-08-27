@@ -7,12 +7,14 @@
         </template>
         <template #right>
           <div class="right-pane">
-            <NoteSwitcher class="pane-switcher" />
-            <WorkbenchActions
-              class="pane-actions"
-              :save-state="saveState"
-              :saved-at="lastSavedAt"
-            />
+            <div class="right-pane-header">
+              <NoteSwitcher class="pane-switcher" />
+              <WorkbenchActions
+                class="pane-actions"
+                :save-state="saveState"
+                :saved-at="lastSavedAt"
+              />
+            </div>
             <NoteEditor
               ref="editorRef"
               class="editor"
@@ -130,17 +132,27 @@ onUnmounted(() => {
   background: var(--color-surface);
 }
 
+.right-pane-header {
+  height: 40px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8f8f8;
+  border-left: 1px solid #fff;
+}
+
 .pane-switcher {
-  position: absolute;
-  top: 10px;
-  left: 12px;
+  // position: absolute;
+  // top: 10px;
+  // left: 12px;
   z-index: 8;
 }
 
 .pane-actions {
-  position: absolute;
-  top: 10px;
-  right: 16px;
+  // position: absolute;
+  // top: 10px;
+  // right: 16px;
   z-index: 8;
 }
 
