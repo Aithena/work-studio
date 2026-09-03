@@ -4,7 +4,7 @@ use std::process::Command;
 use tauri::webview::{NewWindowResponse, WebviewWindowBuilder};
 use tauri::Url;
 
-const DEFAULT_APP_URL: &str = "http://127.0.0.1:18900";
+const DEFAULT_APP_URL: &str = "https://work.awall.cc";
 
 fn app_origin_url(config: &tauri::Config) -> Url {
   #[cfg(dev)]

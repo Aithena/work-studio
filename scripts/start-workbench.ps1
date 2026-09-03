@@ -79,6 +79,8 @@ Set-Location $Root
 
 $Port = if ($env:WORK_STUDIO_PORT) { $env:WORK_STUDIO_PORT } else { '18900' }
 $Url = "http://127.0.0.1:$Port"
+# Tauri / 桌面窗口默认打开 CF；本机服务仍启动供调试
+$AppUrl = if ($env:WORK_STUDIO_APP_URL) { $env:WORK_STUDIO_APP_URL } else { 'https://work.awall.cc' }
 $LogDir = Join-Path $Root 'data'
 $LogFile = Join-Path $LogDir 'autostart.log'
 
@@ -104,13 +106,13 @@ function Resolve-PnpmCmd {
   return $null
 }
 
-Write-Log "starting work-studio at $Url (OpenBrowser=$OpenBrowser)"
+Write-Log "starting local server at $Url; app window → $AppUrl (OpenBrowser=$OpenBrowser)"
 
 $listening = Get-NetTCPConnection -LocalPort ([int]$Port) -State Listen -ErrorAction SilentlyContinue
 if ($listening) {
   Write-Log "port $Port already in use, skip start"
   if ($OpenBrowser) {
-    Open-AppWindow $Url
+    Open-AppWindow $AppUrl
   }
   exit 0
 }
@@ -185,6 +187,6 @@ if ($ready) {
 }
 
 if ($OpenBrowser) {
-  Write-Log 'opening app window'
-  Open-AppWindow $Url
+  Write-Log "opening app window → $AppUrl"
+  Open-AppWindow $AppUrl
 }

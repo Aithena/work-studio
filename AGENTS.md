@@ -4,13 +4,23 @@
 
 新会话：先按下面路径打开文件，不要全库扫描。产品规格在 `.codex/技术实现规范.md`，不要当代码入口。
 
+## 双轨：本机调试 + CF 正式
+
+| 轨 | 用途 | 入口 |
+| --- | --- | --- |
+| 本机 | 开发/调试；开机可自启 Node | `http://127.0.0.1:18900`（`pnpm dev` 或自启脚本） |
+| CF | 正式访问；Tauri 套壳也指向这里 | `https://work.awall.cc` |
+
+两边数据独立（本机 SQLite vs D1/R2），不自动同步；需要时用导入导出 zip。
+
 ## 栈与端口
 
 - 前端：Vue 3 + Vite + Element Plus + Less → `http://127.0.0.1:18900`
 - 后端：Hono + better-sqlite3 → `http://127.0.0.1:8787`（Vite 把 `/api` 代理过去）
-- 桌面：Tauri 2 套壳，只加载上述本地页，不打包后端
-- 数据：`data/note.db`，上传 `data/uploads/`，备份 `data/backups/`
-- 开发：`pnpm dev`（同时起 server + web）
+- 桌面：Tauri 2 套壳，加载 `https://work.awall.cc`（不打包后端）
+- 云端：Worker + D1 + R2 + Assets → `worker/`、`wrangler.toml`
+- 数据（本机）：`data/note.db`，上传 `data/uploads/`，备份 `data/backups/`
+- 开发：`pnpm dev`（同时起 server + web）；部署：`pnpm cf:deploy`
 
 ## 按功能找文件
 
@@ -36,6 +46,8 @@
 | 图片上传 | `server/uploads.ts`（返回 AiEditor 的 `errorCode` 结构，不走 `{ success }`） |
 | Tauri 窗口 / 外链 Chrome | `src-tauri/src/lib.rs`、`src-tauri/tauri.conf.json` |
 | 开机/桌面快捷方式 | `scripts/start-workbench.ps1`、`autostart.ps1`、`desktop-shortcut.ps1` |
+| CF Worker / 鉴权 / 路由 | `worker/index.ts` → `worker/app.ts`；D1 迁移 `worker/migrations/` |
+| CF 部署 | `wrangler.toml`；`pnpm cf:deploy`；secrets：`ACCESS_TOKEN`、`AI_API_KEY` |
 
 ## 约定
 
@@ -44,4 +56,4 @@
 - 笔记 debounce 500ms 自动保存；当前笔记 id 在 `localStorage` 的 `workbench.current-note-id`
 - 活动刷新靠 `window` 事件 `workbench:activity`；搜索靠 `workbench:search`（Ctrl+K）
 - 前端多用相对路径 import；Vite 有 `@` → `src` 别名但现有代码几乎不用
-- 不要引入路由、Pinia、ORM、云数据库；保持单机本地
+- 本机轨：不要引入路由、Pinia、ORM；CF 轨用 D1/R2，与本机库分开

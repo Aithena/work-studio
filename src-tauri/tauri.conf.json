@@ -4,8 +4,8 @@
   "version": "0.1.0",
   "identifier": "app.workstudio.desktop",
   "build": {
-    "frontendDist": "http://127.0.0.1:18900",
-    "devUrl": "http://127.0.0.1:18900"
+    "frontendDist": "https://work.awall.cc",
+    "devUrl": "https://work.awall.cc"
   },
   "app": {
     "windows": [

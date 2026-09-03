@@ -1,0 +1,32 @@
+name = "work-studio"
+main = "worker/index.ts"
+compatibility_date = "2025-02-24"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = false
+
+routes = [
+  { pattern = "work.awall.cc", custom_domain = true }
+]
+
+[assets]
+directory = "./dist"
+binding = "ASSETS"
+not_found_handling = "single-page-application"
+run_worker_first = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "work-studio"
+database_id = "26deb328-1931-4912-b1e8-ac3da7b7da56"
+migrations_dir = "worker/migrations"
+
+[[r2_buckets]]
+binding = "UPLOADS"
+bucket_name = "work-studio-uploads"
+
+[vars]
+AI_BASE_URL = "https://api.deepseek.com/v1"
+AI_MODEL = "deepseek-v4-flash"
+
+# Secrets via `wrangler secret put`:
+# ACCESS_TOKEN, AI_API_KEY
