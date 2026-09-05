@@ -210,3 +210,12 @@
 [2026-09-03 09:49:34] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=True)
 [2026-09-03 09:49:35] port 18900 already in use, skip start
 [2026-09-03 09:49:36] opened tauri window via D:\Apps\work-studio\src-tauri\target\release\work-studio.exe
+[2026-09-04 23:23:50] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=True)
+[2026-09-04 23:23:52] port 18900 already in use, skip start
+[2026-09-04 23:23:52] opened tauri window via D:\Apps\work-studio\src-tauri\target\release\work-studio.exe
+[2026-09-05 10:46:18] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-09-05 10:46:21] server pid=8928 via node + tsx (hidden)
+[2026-09-05 10:46:27] ready at http://127.0.0.1:18900
+[2026-09-05 10:55:41] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=True)
+[2026-09-05 10:55:42] port 18900 already in use, skip start
+[2026-09-05 10:55:43] opened tauri window via D:\Apps\work-studio\src-tauri\target\release\work-studio.exe

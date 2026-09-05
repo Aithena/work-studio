@@ -239,6 +239,7 @@ function createEditor() {
       '|',
       'heading',
       'font-size',
+      'line-height',
       '|',
       'bold',
       'italic',
