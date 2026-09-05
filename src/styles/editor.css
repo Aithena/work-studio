@@ -46,8 +46,62 @@
 }
 .note-editor .aie-content p {
   margin: 10px 0;
-  line-height: 18px;
-  min-height: 18px;
+  line-height: 1.5;
+  min-height: 1em;
+}
+.note-editor .aie-content p[style*='line-height: 100%'],
+.note-editor .aie-content h1[style*='line-height: 100%'],
+.note-editor .aie-content h2[style*='line-height: 100%'],
+.note-editor .aie-content h3[style*='line-height: 100%'],
+.note-editor .aie-content h4[style*='line-height: 100%'],
+.note-editor .aie-content h5[style*='line-height: 100%'],
+.note-editor .aie-content h6[style*='line-height: 100%'] {
+  line-height: 1 !important;
+}
+.note-editor .aie-content p[style*='line-height: 125%'],
+.note-editor .aie-content h1[style*='line-height: 125%'],
+.note-editor .aie-content h2[style*='line-height: 125%'],
+.note-editor .aie-content h3[style*='line-height: 125%'],
+.note-editor .aie-content h4[style*='line-height: 125%'],
+.note-editor .aie-content h5[style*='line-height: 125%'],
+.note-editor .aie-content h6[style*='line-height: 125%'] {
+  line-height: 1.25 !important;
+}
+.note-editor .aie-content p[style*='line-height: 150%'],
+.note-editor .aie-content h1[style*='line-height: 150%'],
+.note-editor .aie-content h2[style*='line-height: 150%'],
+.note-editor .aie-content h3[style*='line-height: 150%'],
+.note-editor .aie-content h4[style*='line-height: 150%'],
+.note-editor .aie-content h5[style*='line-height: 150%'],
+.note-editor .aie-content h6[style*='line-height: 150%'] {
+  line-height: 1.5 !important;
+}
+.note-editor .aie-content p[style*='line-height: 200%'],
+.note-editor .aie-content h1[style*='line-height: 200%'],
+.note-editor .aie-content h2[style*='line-height: 200%'],
+.note-editor .aie-content h3[style*='line-height: 200%'],
+.note-editor .aie-content h4[style*='line-height: 200%'],
+.note-editor .aie-content h5[style*='line-height: 200%'],
+.note-editor .aie-content h6[style*='line-height: 200%'] {
+  line-height: 2 !important;
+}
+.note-editor .aie-content p[style*='line-height: 250%'],
+.note-editor .aie-content h1[style*='line-height: 250%'],
+.note-editor .aie-content h2[style*='line-height: 250%'],
+.note-editor .aie-content h3[style*='line-height: 250%'],
+.note-editor .aie-content h4[style*='line-height: 250%'],
+.note-editor .aie-content h5[style*='line-height: 250%'],
+.note-editor .aie-content h6[style*='line-height: 250%'] {
+  line-height: 2.5 !important;
+}
+.note-editor .aie-content p[style*='line-height: 300%'],
+.note-editor .aie-content h1[style*='line-height: 300%'],
+.note-editor .aie-content h2[style*='line-height: 300%'],
+.note-editor .aie-content h3[style*='line-height: 300%'],
+.note-editor .aie-content h4[style*='line-height: 300%'],
+.note-editor .aie-content h5[style*='line-height: 300%'],
+.note-editor .aie-content h6[style*='line-height: 300%'] {
+  line-height: 3 !important;
 }
 .note-editor .aie-container .aie-footer,
 .note-editor .aie-container aie-footer {

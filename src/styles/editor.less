@@ -53,8 +53,39 @@
 
     p {
       margin: 10px 0;
-      line-height: 18px;
-      min-height: 18px;
+      // 用无单位行高，随段落/span 字号缩放；不要写死 px
+      line-height: 1.5;
+      min-height: 1em;
+    }
+
+    // AiEditor 把菜单 1.0~3.0 存成段落上的 100%~300%。
+    // 百分比按「段落自身字号」计算，而工具栏字号打在 span 上，
+    // 大字号时行高会严重偏小。用无单位值覆盖，按实际字号倍率生效。
+    p,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      &[style*='line-height: 100%'] {
+        line-height: 1 !important;
+      }
+      &[style*='line-height: 125%'] {
+        line-height: 1.25 !important;
+      }
+      &[style*='line-height: 150%'] {
+        line-height: 1.5 !important;
+      }
+      &[style*='line-height: 200%'] {
+        line-height: 2 !important;
+      }
+      &[style*='line-height: 250%'] {
+        line-height: 2.5 !important;
+      }
+      &[style*='line-height: 300%'] {
+        line-height: 3 !important;
+      }
     }
   }
 
