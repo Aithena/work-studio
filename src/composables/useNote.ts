@@ -10,7 +10,7 @@ import {
 } from '../api/note'
 import type { NoteMeta, SaveState } from '../types'
 
-const DEBOUNCE_MS = 500
+const DEBOUNCE_MS = 5000
 const NOTE_ID_KEY = 'workbench.current-note-id'
 
 const notes = ref<NoteMeta[]>([])
