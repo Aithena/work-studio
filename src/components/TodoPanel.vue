@@ -45,7 +45,15 @@
         />
       </div>
 
-      <div v-if="isEmpty && !adding" class="empty">
+      <div v-if="loading && isEmpty && !adding" class="loading" aria-busy="true" aria-live="polite">
+        <div v-for="n in 5" :key="n" class="skeleton-row">
+          <span class="skeleton-check" />
+          <span class="skeleton-line" :style="{ width: skeletonWidths[n - 1] }" />
+        </div>
+        <p class="loading-text">正在加载…</p>
+      </div>
+
+      <div v-else-if="isEmpty && !adding" class="empty">
         <span class="empty-circle" />
         <p>{{ emptyText }}</p>
         <button
@@ -159,6 +167,7 @@ import type { Todo, TodoPriority } from '../types'
 const {
   counts,
   filter,
+  loading,
   searchQuery,
   activeTodos,
   completedTodos,
@@ -178,6 +187,8 @@ const {
   moveToTop,
   persistGroupOrder,
 } = useTodos()
+
+const skeletonWidths = ['72%', '58%', '80%', '64%', '48%']
 
 const adding = ref(false)
 const draft = ref('')
@@ -532,6 +543,57 @@ onUnmounted(() => {
   outline: none;
   font-size: 12px;
   background: transparent;
+}
+
+.loading {
+  padding: 8px 4px 0;
+}
+
+.skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 36px;
+  padding: 0 8px;
+}
+
+.skeleton-check,
+.skeleton-line {
+  background: linear-gradient(
+    90deg,
+    var(--color-border-light) 0%,
+    #f6f6f4 45%,
+    var(--color-border-light) 90%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.2s ease-in-out infinite;
+  border-radius: 999px;
+}
+
+.skeleton-check {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.skeleton-line {
+  height: 10px;
+}
+
+.loading-text {
+  margin: 18px 0 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
 }
 
 .empty {

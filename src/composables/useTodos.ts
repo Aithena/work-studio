@@ -15,7 +15,7 @@ import { sortActiveTodos } from '../utils/todoPriority'
 const todos = ref<Todo[]>([])
 const counts = ref<TodoCounts>({ active: 0, completed: 0, deleted: 0 })
 const filter = ref<TodoFilter>('active')
-const loading = ref(false)
+const loading = ref(true)
 const searchQuery = ref('')
 
 function replaceTodo(next: Todo) {
