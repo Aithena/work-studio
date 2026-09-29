@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { api } from './app'
 import {
+  ACCESS_AUTH_ENABLED,
   clearAccessCookie,
   hasValidAccess,
   loginPageHtml,
@@ -12,7 +13,7 @@ import type { WorkerEnv } from './env'
 const app = new Hono<{ Bindings: WorkerEnv }>()
 
 app.get('/login', (c) => {
-  if (!c.env.ACCESS_TOKEN?.trim()) {
+  if (!ACCESS_AUTH_ENABLED || !c.env.ACCESS_TOKEN?.trim()) {
     return c.redirect('/')
   }
   if (hasValidAccess(c)) {
@@ -22,6 +23,8 @@ app.get('/login', (c) => {
 })
 
 app.post('/auth/login', async (c) => {
+  if (!ACCESS_AUTH_ENABLED) return c.redirect('/')
+
   const expected = c.env.ACCESS_TOKEN?.trim()
   if (!expected) return c.redirect('/')
 

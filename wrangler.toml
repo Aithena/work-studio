@@ -29,4 +29,4 @@ AI_BASE_URL = "https://api.deepseek.com/v1"
 AI_MODEL = "deepseek-v4-flash"
 
 # Secrets via `wrangler secret put`:
-# ACCESS_TOKEN, AI_API_KEY
+# ACCESS_TOKEN（受 worker/auth.ts 的 ACCESS_AUTH_ENABLED 控制；false 时忽略）, AI_API_KEY

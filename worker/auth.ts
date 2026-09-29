@@ -4,7 +4,12 @@ import type { WorkerEnv } from './env'
 
 export const ACCESS_COOKIE = 'work_access'
 
+/** 设为 false 时忽略 ACCESS_TOKEN，站点对所有人开放读写 */
+export const ACCESS_AUTH_ENABLED = false
+
 export function hasValidAccess(c: Context<{ Bindings: WorkerEnv }>): boolean {
+  if (!ACCESS_AUTH_ENABLED) return true
+
   const expected = c.env.ACCESS_TOKEN?.trim()
   if (!expected) return true
 
