@@ -339,20 +339,12 @@ watch(
       return
     }
 
-    if (switched) {
-      syncing = true
-      editor.setContent(next, false)
-      syncing = false
-      applyRestoredScroll()
-      return
-    }
+    if (!switched) return
 
-    const el = getScrollEl()
-    const prevTop = el?.scrollTop ?? readSavedScroll() ?? 0
     syncing = true
     editor.setContent(next, false)
     syncing = false
-    if (el) el.scrollTop = prevTop
+    applyRestoredScroll()
   },
 )
 

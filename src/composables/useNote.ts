@@ -93,11 +93,21 @@ async function flush(next = content.value): Promise<boolean> {
   try {
     const saved = await apiSaveNote(next, noteId)
     if (current !== requestId) return false
-    content.value = next
-    lastSavedAt.value = saved.updatedAt
-    saveState.value = 'saved'
+
     const index = notes.value.findIndex((item) => item.id === saved.id)
     if (index !== -1) notes.value[index] = toMeta(saved)
+
+    if (noteId !== currentId.value) return true
+
+    lastSavedAt.value = saved.updatedAt
+    // 保存期间如果又输入了，保留本地最新内容，不要用旧稿覆盖编辑器
+    if (content.value !== next) {
+      saveState.value = 'editing'
+      if (!timer) queueSave(content.value)
+      return true
+    }
+
+    saveState.value = 'saved'
     return true
   } catch {
     if (current !== requestId) return false
