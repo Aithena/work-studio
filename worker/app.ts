@@ -25,6 +25,7 @@ import {
   getCounts,
   type TodoFilter,
 } from './todos'
+import { galleryHandoffDenied, signGalleryHandoff } from './gallery-handoff'
 import { contentTypeFor, getUploadedObject, saveUploadedImage } from './uploads'
 import type { NoteRow, TodoRow, WorkerEnv } from './env'
 
@@ -118,6 +119,17 @@ function parseFilter(raw: string | undefined): TodoFilter {
 }
 
 api.get('/health', (c) => c.json(ok({ ok: true })))
+
+api.get('/gallery-handoff', async (c) => {
+  const denied = galleryHandoffDenied(c.req.header('sec-fetch-site'))
+  if (denied) return c.json(fail(denied), 403)
+
+  const secret = c.env.HANDOFF_SECRET?.trim()
+  if (!secret) return c.json(fail('未配置 HANDOFF_SECRET'), 500)
+
+  const url = await signGalleryHandoff(secret)
+  return c.json({ url })
+})
 
 api.get('/todos', async (c) => {
   const filter = parseFilter(c.req.query('filter'))

@@ -25,6 +25,7 @@ import {
   saveUploadedImage,
   ensureUploadDir,
 } from './uploads'
+import { galleryHandoffDenied, signGalleryHandoff } from '../worker/gallery-handoff'
 import {
   createTodo,
   createTodos,
@@ -130,6 +131,17 @@ function parseFilter(raw: string | undefined): TodoFilter {
 getDb()
 
 app.get('/api/health', (c) => c.json(ok({ ok: true })))
+
+app.get('/api/gallery-handoff', async (c) => {
+  const denied = galleryHandoffDenied(c.req.header('sec-fetch-site'))
+  if (denied) return c.json(fail(denied), 403)
+
+  const secret = process.env.HANDOFF_SECRET?.trim()
+  if (!secret) return c.json(fail('未配置 HANDOFF_SECRET'), 500)
+
+  const url = await signGalleryHandoff(secret)
+  return c.json({ url })
+})
 
 app.get('/api/todos', (c) => {
   const filter = parseFilter(c.req.query('filter'))

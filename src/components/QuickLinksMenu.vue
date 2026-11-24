@@ -23,6 +23,16 @@
       >
         {{ item.label }}
       </a>
+      <button class="link-item" type="button" @click="openGallery">素材集图库</button>
+      <a
+        class="link-item"
+        href="https://aithena.github.io/kys-order-lbs/"
+        target="_blank"
+        rel="noopener noreferrer"
+        @click="open = false"
+      >
+        康医手订单（LBS）
+      </a>
     </div>
   </div>
 </template>
@@ -30,7 +40,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue'
 import { Connection } from '@element-plus/icons-vue'
-import { ElIcon } from 'element-plus'
+import { ElIcon, ElMessage } from 'element-plus'
 
 const open = ref(false)
 const rootRef = ref<HTMLElement | null>(null)
@@ -38,9 +48,25 @@ const rootRef = ref<HTMLElement | null>(null)
 const links = [
   { label: '图片工具箱', url: 'https://aithena.github.io/img-tools/#/ico' },
   { label: '文本工具箱', url: 'https://aithena.github.io/str-tools/' },
-  { label: '订单LBS', url: 'https://aithena.github.io/kys-order-lbs/' },
-  { label: '接口文档', url: 'http://127.0.0.1:18902/' },
 ]
+
+async function openGallery() {
+  open.value = false
+  const tab = window.open('about:blank', '_blank')
+  if (tab) tab.opener = null
+  try {
+    const res = await fetch('/api/gallery-handoff')
+    const body = (await res.json()) as { url?: string; message?: string }
+    if (!res.ok || typeof body.url !== 'string' || !body.url) {
+      throw new Error(body.message || '无法打开素材集图库')
+    }
+    if (tab) tab.location.replace(body.url)
+    else window.open(body.url, '_blank', 'noopener')
+  } catch (error) {
+    tab?.close()
+    ElMessage.error(error instanceof Error ? error.message : '无法打开素材集图库')
+  }
+}
 
 function onDocClick(event: MouseEvent) {
   if (!open.value) return
@@ -85,7 +111,7 @@ onUnmounted(() => document.removeEventListener('mousedown', onDocClick))
   top: calc(100% + 8px);
   right: 0;
   z-index: 30;
-  min-width: 168px;
+  min-width: 188px;
   padding: 8px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.82);
@@ -102,12 +128,21 @@ onUnmounted(() => document.removeEventListener('mousedown', onDocClick))
 
 .link-item {
   display: block;
-  height: 34px;
+  height: 28px;
   padding: 0 10px;
   border-radius: 8px;
-  line-height: 34px;
-  font-size: 13px;
+  box-sizing: border-box;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 28px;
+  white-space: nowrap;
   color: var(--color-text);
+  cursor: pointer;
   text-decoration: none;
   transition: background 160ms ease;
 

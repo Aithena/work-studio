@@ -3,6 +3,7 @@ export type WorkerEnv = {
   UPLOADS: R2Bucket
   ASSETS: Fetcher
   ACCESS_TOKEN?: string
+  HANDOFF_SECRET?: string
   AI_API_KEY?: string
   AI_BASE_URL?: string
   AI_MODEL?: string

@@ -135,7 +135,7 @@
     </div>
 
     <TodoFilterBar :filter="filter" @change="setFilter" />
-    <TodoImportDialog v-model="importOpen" @import="onImport" />
+    <TodoImportDialog v-model="importOpen" :import-text="onImport" />
     <TodoContextMenu
       :visible="menu.visible"
       :x="menu.x"

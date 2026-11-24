@@ -363,3 +363,177 @@
 [2026-10-15 07:27:34] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
 [2026-10-15 07:27:36] server pid=7756 via node + tsx (hidden)
 [2026-10-15 07:27:38] ready at http://127.0.0.1:18900
+[2026-10-15 20:15:22] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-15 20:15:24] server pid=23932 via node + tsx (hidden)
+[2026-10-15 20:15:28] ready at http://127.0.0.1:18900
+[2026-10-15 20:16:22] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=True)
+[2026-10-15 20:16:23] port 18900 already in use, skip start
+[2026-10-15 20:16:24] opened tauri window via D:\Apps\work-studio\src-tauri\target\release\work-studio.exe
+[2026-10-16 07:03:25] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-16 07:03:26] server pid=21448 via node + tsx (hidden)
+[2026-10-16 07:03:32] ready at http://127.0.0.1:18900
+[2026-10-17 16:03:53] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-17 16:03:57] server pid=17360 via node + tsx (hidden)
+[2026-10-17 16:04:03] ready at http://127.0.0.1:18900
+[2026-10-17 21:15:10] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-17 21:15:11] server pid=23780 via node + tsx (hidden)
+[2026-10-17 21:15:12] ready at http://127.0.0.1:18900
+[2026-10-18 20:12:03] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-18 20:12:05] server pid=12616 via node + tsx (hidden)
+[2026-10-18 20:12:08] ready at http://127.0.0.1:18900
+[2026-10-19 06:22:18] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-19 06:22:19] server pid=1284 via node + tsx (hidden)
+[2026-10-19 06:22:22] ready at http://127.0.0.1:18900
+[2026-10-19 20:20:01] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-19 20:20:02] server pid=13768 via node + tsx (hidden)
+[2026-10-19 20:20:03] ready at http://127.0.0.1:18900
+[2026-10-20 06:11:46] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-20 06:11:49] server pid=27680 via node + tsx (hidden)
+[2026-10-20 06:11:56] ready at http://127.0.0.1:18900
+[2026-10-20 09:25:30] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-20 09:25:32] server pid=17732 via node + tsx (hidden)
+[2026-10-20 09:25:33] ready at http://127.0.0.1:18900
+[2026-10-20 10:08:27] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-20 10:08:36] server pid=31112 via node + tsx (hidden)
+[2026-10-20 10:08:47] ready at http://127.0.0.1:18900
+[2026-10-20 10:33:48] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-20 10:33:49] server pid=12284 via node + tsx (hidden)
+[2026-10-20 10:33:50] ready at http://127.0.0.1:18900
+[2026-10-20 16:43:32] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-20 16:43:32] server pid=25444 via node + tsx (hidden)
+[2026-10-20 16:43:33] ready at http://127.0.0.1:18900
+[2026-10-20 20:25:28] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-20 20:25:29] server pid=6972 via node + tsx (hidden)
+[2026-10-20 20:25:33] ready at http://127.0.0.1:18900
+[2026-10-21 07:11:01] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-21 07:11:03] server pid=19060 via node + tsx (hidden)
+[2026-10-21 07:11:06] ready at http://127.0.0.1:18900
+[2026-10-21 08:25:32] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=True)
+[2026-10-21 08:25:33] port 18900 already in use, skip start
+[2026-10-21 08:25:33] opened tauri window via D:\Apps\work-studio\src-tauri\target\release\work-studio.exe
+[2026-10-21 14:52:29] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-21 14:52:31] server pid=8748 via node + tsx (hidden)
+[2026-10-21 14:52:34] ready at http://127.0.0.1:18900
+[2026-10-22 06:21:51] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-22 06:21:52] server pid=38284 via node + tsx (hidden)
+[2026-10-22 06:21:55] ready at http://127.0.0.1:18900
+[2026-10-22 12:43:49] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-22 12:43:50] server pid=20836 via node + tsx (hidden)
+[2026-10-22 12:43:51] ready at http://127.0.0.1:18900
+[2026-10-22 20:49:05] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-22 20:49:07] server pid=9204 via node + tsx (hidden)
+[2026-10-22 20:49:10] ready at http://127.0.0.1:18900
+[2026-10-23 06:07:25] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-23 06:07:26] server pid=30080 via node + tsx (hidden)
+[2026-10-23 06:07:29] ready at http://127.0.0.1:18900
+[2026-10-23 19:47:17] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-23 19:47:19] server pid=9692 via node + tsx (hidden)
+[2026-10-23 19:47:20] ready at http://127.0.0.1:18900
+[2026-10-24 08:19:39] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-24 08:19:40] server pid=4576 via node + tsx (hidden)
+[2026-10-24 08:19:44] ready at http://127.0.0.1:18900
+[2026-10-24 21:20:46] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-24 21:20:50] server pid=15248 via node + tsx (hidden)
+[2026-10-24 21:20:56] ready at http://127.0.0.1:18900
+[2026-10-25 05:49:21] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-25 05:49:22] server pid=5256 via node + tsx (hidden)
+[2026-10-25 05:49:24] ready at http://127.0.0.1:18900
+[2026-10-26 21:27:24] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-26 21:27:25] server pid=12608 via node + tsx (hidden)
+[2026-10-26 21:27:26] ready at http://127.0.0.1:18900
+[2026-10-27 13:37:02] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-27 13:37:04] server pid=27888 via node + tsx (hidden)
+[2026-10-27 13:37:09] ready at http://127.0.0.1:18900
+[2026-10-28 08:15:31] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-28 08:15:33] server pid=22940 via node + tsx (hidden)
+[2026-10-28 08:15:37] ready at http://127.0.0.1:18900
+[2026-10-29 10:34:23] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-29 10:34:24] server pid=21444 via node + tsx (hidden)
+[2026-10-29 10:34:27] ready at http://127.0.0.1:18900
+[2026-10-29 11:52:51] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-29 11:52:53] server pid=25992 via node + tsx (hidden)
+[2026-10-29 11:52:57] ready at http://127.0.0.1:18900
+[2026-10-30 01:52:15] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-30 01:52:18] server pid=7844 via node + tsx (hidden)
+[2026-10-30 01:52:21] ready at http://127.0.0.1:18900
+[2026-10-30 10:26:24] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-30 10:26:27] server pid=29784 via node + tsx (hidden)
+[2026-10-30 10:26:33] ready at http://127.0.0.1:18900
+[2026-10-30 18:54:50] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-10-30 18:54:57] server pid=29332 via node + tsx (hidden)
+[2026-10-30 18:55:06] ready at http://127.0.0.1:18900
+[2026-11-01 03:24:57] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-01 03:25:04] server pid=22288 via node + tsx (hidden)
+[2026-11-01 03:25:10] ready at http://127.0.0.1:18900
+[2026-11-02 08:29:04] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-02 08:29:07] server pid=30180 via node + tsx (hidden)
+[2026-11-02 08:29:13] ready at http://127.0.0.1:18900
+[2026-11-03 09:18:27] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-03 09:18:30] server pid=38728 via node + tsx (hidden)
+[2026-11-03 09:18:33] ready at http://127.0.0.1:18900
+[2026-11-03 21:33:01] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-03 21:33:02] server pid=12448 via node + tsx (hidden)
+[2026-11-03 21:33:06] ready at http://127.0.0.1:18900
+[2026-11-04 16:12:43] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-04 16:12:44] server pid=36072 via node + tsx (hidden)
+[2026-11-04 16:12:47] ready at http://127.0.0.1:18900
+[2026-11-04 21:41:15] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-04 21:41:16] server pid=15580 via node + tsx (hidden)
+[2026-11-04 21:41:20] ready at http://127.0.0.1:18900
+[2026-11-07 13:32:30] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-07 13:32:33] server pid=16196 via node + tsx (hidden)
+[2026-11-07 13:32:39] ready at http://127.0.0.1:18900
+[2026-11-08 03:02:17] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-08 03:02:19] server pid=11824 via node + tsx (hidden)
+[2026-11-08 03:02:22] ready at http://127.0.0.1:18900
+[2026-11-08 09:04:09] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-08 09:04:10] server pid=31920 via node + tsx (hidden)
+[2026-11-08 09:04:11] ready at http://127.0.0.1:18900
+[2026-11-08 19:24:09] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-08 19:24:10] server pid=29632 via node + tsx (hidden)
+[2026-11-08 19:24:13] ready at http://127.0.0.1:18900
+[2026-11-09 08:35:04] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-09 08:35:05] server pid=21168 via node + tsx (hidden)
+[2026-11-09 08:35:07] ready at http://127.0.0.1:18900
+[2026-11-09 10:21:15] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-09 10:21:17] server pid=35036 via node + tsx (hidden)
+[2026-11-09 10:21:20] ready at http://127.0.0.1:18900
+[2026-11-09 12:44:19] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-09 12:44:20] server pid=3904 via node + tsx (hidden)
+[2026-11-09 12:44:21] ready at http://127.0.0.1:18900
+[2026-11-09 21:32:44] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-09 21:32:46] server pid=3412 via node + tsx (hidden)
+[2026-11-09 21:32:51] ready at http://127.0.0.1:18900
+[2026-11-10 08:50:25] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-10 08:50:27] server pid=9972 via node + tsx (hidden)
+[2026-11-10 08:50:28] ready at http://127.0.0.1:18900
+[2026-11-11 08:29:48] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-11 08:29:51] server pid=34300 via node + tsx (hidden)
+[2026-11-11 08:29:59] ready at http://127.0.0.1:18900
+[2026-11-14 23:31:11] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-14 23:31:14] server pid=24568 via node + tsx (hidden)
+[2026-11-14 23:31:20] ready at http://127.0.0.1:18900
+[2026-11-16 09:14:32] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-16 09:14:35] server pid=27660 via node + tsx (hidden)
+[2026-11-16 09:14:38] ready at http://127.0.0.1:18900
+[2026-11-20 09:32:12] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-20 09:32:14] server pid=6024 via node + tsx (hidden)
+[2026-11-20 09:32:20] ready at http://127.0.0.1:18900
+[2026-11-21 19:09:39] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-21 19:09:45] server pid=18112 via node + tsx (hidden)
+[2026-11-21 19:09:53] ready at http://127.0.0.1:18900
+[2026-11-23 08:58:21] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-23 08:58:23] server pid=30668 via node + tsx (hidden)
+[2026-11-23 08:58:26] ready at http://127.0.0.1:18900
+[2026-11-23 13:36:38] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-23 13:36:46] server pid=21048 via node + tsx (hidden)
+[2026-11-23 13:36:55] ready at http://127.0.0.1:18900
+[2026-11-23 13:42:51] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-23 13:42:58] server pid=9488 via node + tsx (hidden)
+[2026-11-23 13:43:04] ready at http://127.0.0.1:18900
+[2026-11-23 13:57:32] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-23 13:57:38] server pid=14372 via node + tsx (hidden)
+[2026-11-23 13:57:41] ready at http://127.0.0.1:18900
+[2026-11-23 14:31:00] starting local server at http://127.0.0.1:18900; app window 鈫? (OpenBrowser=False)
+[2026-11-23 14:31:06] server pid=9528 via node + tsx (hidden)
+[2026-11-23 14:31:12] ready at http://127.0.0.1:18900

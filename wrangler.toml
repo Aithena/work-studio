@@ -30,3 +30,4 @@ AI_MODEL = "deepseek-v4-flash"
 
 # Secrets via `wrangler secret put`:
 # ACCESS_TOKEN（受 worker/auth.ts 的 ACCESS_AUTH_ENABLED 控制；false 时忽略）, AI_API_KEY
+# HANDOFF_SECRET（与图库 Worker 相同，用于签发素材集图库短链接）
